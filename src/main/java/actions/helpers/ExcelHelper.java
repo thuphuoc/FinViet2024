@@ -218,6 +218,7 @@ public int countRowsHasTextWithColumName(int targetValue, String columName) {
 
 public List<Integer> findPositions(int columnIndex, int targetValue) {
     List<Integer> positions = new ArrayList<>();
+    List<Integer> results = new ArrayList<>();
     boolean inSequence = false;
     int start = -1;
 
@@ -245,8 +246,19 @@ public List<Integer> findPositions(int columnIndex, int targetValue) {
         positions.add(start);
         positions.add(sh.getLastRowNum());
     }
+    if (!positions.isEmpty()) {
+        int startRow = 0, endRow = 0;
+        for (int i = 0; i < positions.size(); i += 2) {
+            startRow = positions.get(i);
+            endRow = positions.get(i + 1);
+        }
+        if(startRow > 0 && endRow > 0) {
+            results.add(startRow);
+            results.add(endRow);
+        }
+    }
 
-    return positions;
+    return results;
 }
 
 }

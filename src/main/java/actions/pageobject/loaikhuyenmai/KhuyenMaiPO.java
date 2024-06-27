@@ -59,13 +59,13 @@ public class KhuyenMaiPO extends BasePage {
         threadSecond(1);
         clickToElement(driver, KhuyenMaiUI.BTN_FORM_DYM, formSearch, "Tìm kiếm");
         threadSecond(2);
-        int sizeRadio=getListElement(driver,KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
-        int demClickTimKiem=0;
-        while(sizeRadio!=1 && demClickTimKiem<5){
+        int sizeRadio = getListElement(driver, KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
+        int demClickTimKiem = 0;
+        while (sizeRadio != 1 && demClickTimKiem < 5) {
             demClickTimKiem++;
             clickToElement(driver, KhuyenMaiUI.BTN_FORM_DYM, formSearch, "Tìm kiếm");
             threadSecond(5);
-            sizeRadio=getListElement(driver,KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
+            sizeRadio = getListElement(driver, KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
         }
         checkToDefaultCheckBox(driver, KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch);
         threadSecond(1);
@@ -78,13 +78,13 @@ public class KhuyenMaiPO extends BasePage {
         threadSecond(1);
         clickToElement(driver, KhuyenMaiUI.BTN_FORM_DYM, formSearch, "Tìm kiếm");
         threadSecond(2);
-        int sizeRadio=getListElement(driver,KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
-        int demClickTimKiem=0;
-        while(sizeRadio!=1 && demClickTimKiem<5){
+        int sizeRadio = getListElement(driver, KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
+        int demClickTimKiem = 0;
+        while (sizeRadio != 1 && demClickTimKiem < 5) {
             demClickTimKiem++;
             clickToElement(driver, KhuyenMaiUI.BTN_FORM_DYM, formSearch, "Tìm kiếm");
             threadSecond(5);
-            sizeRadio=getListElement(driver,KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
+            sizeRadio = getListElement(driver, KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch).size();
         }
         checkToDefaultCheckBox(driver, KhuyenMaiUI.CHECKBOX_FORM_DYM, formSearch);
         threadSecond(1);
@@ -120,14 +120,14 @@ public class KhuyenMaiPO extends BasePage {
     }
 
 
-    public void hinhThucApDungGoiKM(int dong, ExcelHelper excel){
-        if (excel.isCellHasData("Hình thức áp dụng gói khuyến mãi", dong)){
+    public void hinhThucApDungGoiKM(int dong, ExcelHelper excel) {
+        if (excel.isCellHasData("Hình thức áp dụng gói khuyến mãi", dong)) {
             String hinhThucADGoiKM = excel.getCellData("Hình thức áp dụng gói khuyến mãi", dong);
             selectItemCustomDropDown(driver, KhuyenMaiUI.DROPDOWN_PARENT_DYM, KhuyenMaiUI.CHILD_HTADCTKM_DYM, hinhThucADGoiKM, "Hình thức áp dụng gói khuyến mãi");
+        }
     }
-}
 
-    public void themDieuKien(String loaiDieuKien, int dong,ExcelHelper excel){
+    public void themDieuKien(String loaiDieuKien, int dong, ExcelHelper excel) {
         if (excel.isCellHasData(loaiDieuKien, dong)) {
             clickToElement(driver, KhuyenMaiUI.THEMDK_THEONHOM_BTN, "Điều kiện áp dụng", "Thêm điều kiện");
             threadSecond(1);
@@ -271,10 +271,10 @@ public class KhuyenMaiPO extends BasePage {
     public void unCheckThietLapMa() {
         threadSecond(2);
         unCheckToDefaultCheckBox(driver, KhuyenMaiUI.SUDUNGMA_RADIO);
-        String attributeRadio=getElementAtribute(driver, KhuyenMaiUI.SUDUNGMA_RADIO_ATTRIBUTE,"class");
-        while (attributeRadio.equals("ant-checkbox ant-checkbox-checked")){
+        String attributeRadio = getElementAtribute(driver, KhuyenMaiUI.SUDUNGMA_RADIO_ATTRIBUTE, "class");
+        while (attributeRadio.equals("ant-checkbox ant-checkbox-checked")) {
             unCheckToDefaultCheckBox(driver, KhuyenMaiUI.SUDUNGMA_RADIO);
-            attributeRadio=getElementAtribute(driver, KhuyenMaiUI.SUDUNGMA_RADIO_ATTRIBUTE,"class");
+            attributeRadio = getElementAtribute(driver, KhuyenMaiUI.SUDUNGMA_RADIO_ATTRIBUTE, "class");
         }
         clickToElement(driver, KhuyenMaiUI.BTN_DSCTKM_DYM, "Lưu");
         threadSecond(2);
@@ -283,13 +283,13 @@ public class KhuyenMaiPO extends BasePage {
     public void searchKhuyenMai(String textSendKey, String searchTheoField) {
         senkeyToElement(driver, KhuyenMaiUI.SEARCH_DYM, textSendKey, searchTheoField);
         clickToBtnByText("Tìm kiếm");
-        int sizeRadio=getListElement(driver,KhuyenMaiUI.KM_RADIO).size();
-        int demClickTimKiem=0;
-        while(sizeRadio!=1 && demClickTimKiem<5){
+        int sizeRadio = getListElement(driver, KhuyenMaiUI.KM_RADIO).size();
+        int demClickTimKiem = 0;
+        while (sizeRadio != 1 && demClickTimKiem < 5) {
             clickToBtnByText("Tìm kiếm");
             demClickTimKiem++;
             threadSecond(5);
-            sizeRadio=getListElement(driver,KhuyenMaiUI.KM_RADIO).size();
+            sizeRadio = getListElement(driver, KhuyenMaiUI.KM_RADIO).size();
         }
     }
 

@@ -1,15 +1,17 @@
 package actions.pageobject.apdungtrensanpham;
 import actions.common.BasePage;
+import actions.common.GlobalConstants;
+import actions.helpers.ApiHelper;
 import actions.helpers.ExcelHelper;
 import actions.pageobject.GeneratorManager;
 import actions.pageobject.loaikhuyenmai.KhuyenMaiPO;
 import interfaces.khuyenmai.KhuyenMaiUI;
 import io.qameta.allure.Allure;
+import io.restassured.response.Response;
+import lombok.AllArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
-import pojo.HowToLoad;
-import pojo.Order;
-import pojo.Orders;
-import pojo.Product;
+import pojo.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,4 +89,31 @@ public class HTTangKemSPTheoBoiSoPO extends BasePage {
         return orderList;
     }
 
+    public List<GetSchemaIDAndSTT> getGetSchemaIDAndSTTS(ExcelHelper excel) {
+        int soLuongDong = excel.countRowsHasData();
+        List<GetSchemaIDAndSTT> listSchemIDAndSTT= new ArrayList<GetSchemaIDAndSTT>();
+        for (int j = 1; j < soLuongDong; j++) {
+            String schemeID = excel.getCellData("SchemaID", j);
+            System.out.println("SCHEMA THỨ " + j + ": " + schemeID);
+            Allure.step("SCHEMA THỨ  " + j + ": " + schemeID);
+            String STT_Sheet_TangKemSPTheoBoiSo = excel.getCellData("STT", j);
+            int targetValue = Integer.parseInt(STT_Sheet_TangKemSPTheoBoiSo);
+            listSchemIDAndSTT.add(new GetSchemaIDAndSTT(schemeID,targetValue));
+        }
+        return listSchemIDAndSTT;
+    }
+
+    public String getIDKM(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID) {
+        String sku = excel.getCellData("sku", i);
+        int quantity = Integer.parseInt(excel.getCellData("quantity", i));
+        String company_id = excel.getCellData("company_id", i);
+        String agent_phone = excel.getCellData("agent_phone", i);
+        System.out.println("Data valid dòng " + i + " của schema: " + schemeID + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
+        Allure.step("Data valid dòng thứ " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
+        Orders orderList = getOrders(sku, quantity, company_id, agent_phone);
+
+        Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
+
+        return apiHelper.getReponse(rsp, "promotions_allow_apply.id");
+    }
 }
