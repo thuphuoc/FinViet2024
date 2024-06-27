@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Auto Promotion" junit="false" annotations="JDK">
+    <parameter name="os_type" value="app"/>
+    <listeners>
+        <listener class-name="actions.common.TestListener" />
+    </listeners>
+
+    <test name="Run Auto Khuyen Mai_HTTangKemSPTheoBoiSo">
+        <classes>
+            <class name="loaikhuyenmai.apdungtrensanpham.HTTangKemSPTheoBoiSo">
+<!--                <methods>-->
+<!--                   &lt;!&ndash; <include name="TC001_TangKemSPTheoBoiSo_TaoKM" />&ndash;&gt;-->
+<!--                    <include name="TC003_CallApi_Valid_Data" />-->
+<!--                    <include name="TC004_CallApi_Invalid_Data" />-->
+<!--                </methods>-->
+            </class>
+        </classes>
+    </test>
+
+</suite>
