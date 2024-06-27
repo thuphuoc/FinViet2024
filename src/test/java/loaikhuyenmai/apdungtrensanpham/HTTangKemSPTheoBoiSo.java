@@ -1,6 +1,7 @@
 package loaikhuyenmai.apdungtrensanpham;
 
 import actions.common.GlobalConstants;
+import actions.helpers.ApiHelper;
 import actions.helpers.ExcelHelper;
 import actions.common.BaseTest;
 import actions.pageobject.GeneratorManager;
@@ -12,11 +13,11 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pojo.Orders;
-
 import java.util.List;
 
 public class HTTangKemSPTheoBoiSo extends BaseTest {
     ExcelHelper excel = new ExcelHelper();
+    ApiHelper apiHelper= new ApiHelper();
     String excelPath = "src/main/resources/Data_KhuyenMai.xlsx";
     String sheetName_ValidData = "valid_data";
     String sheetName_InvalidData = "invalid_data";
@@ -50,7 +51,6 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
     public void TC001_TangKemSPTheoBoiSo_TaoKM() {
         excel.deleteColumnData("SchemaID");
         int soDongExcelCoData = excel.countRowsHasData();
-//        int soDongExcelCoData = 4;
         for (int i = 1; i < soDongExcelCoData; i++) {
             try {
                 khuyenMaiPage.openPageUrl(driver, GlobalConstants.URL_PROMTION);
@@ -89,12 +89,8 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                 step("Mã CTKM đã duyệt: " + maCTKM_TaoScheme);
                 khuyenMaiPage.guiXetDuyet(maCTKM_TaoScheme);
                 excel.setCellData(maCTKM_TaoScheme, i, "SchemaID");
-                //Kiểm tra nếu schema cuối phải đợi trạng thái 'Đang diễn ra
                 if (i + 1 == soDongExcelCoData) {
-//                    khuyenMaiPage.waitDangDienRa(maCTKM_TaoScheme);
-//                    verifyEquals(khuyenMaiPage.getTrangThaiKM(), "Đang diễn ra");
                     threadSecond(10);
-//                    break;
                 }
             } catch (Exception e) {
                 excel.setCellData("FAIL TẠO SCHEMA", i, "SchemaID");
@@ -103,7 +99,6 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
             }
         }
     }
-
 
     @Test(priority = 3)
     public void TC003_CallApi_Valid_Data() {
@@ -134,7 +129,6 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                 for (int i = 0; i < positions.size(); i += 2) {
                     start = positions.get(i);
                     end = positions.get(i + 1);
-//                        System.out.println("Từ ô thứ " + start + " đến ô thứ " + end );
                 }
             }
 
@@ -152,9 +146,9 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                         step("Data valid dòng thứ " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
                         Orders orderList = httangKemSPTheoBoiSoPage.getOrders(sku, quantity, company_id, agent_phone);
 
-                        Response rsp = postRequestJson(orderList, GlobalConstants.URL_API);
+                        Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
 
-                        String idMaKM = getReponse(rsp, "promotions_allow_apply.id");
+                        String idMaKM = apiHelper.getReponse(rsp, "promotions_allow_apply.id");
                         System.out.println("List schema from API: " + idMaKM);
                         step("List schema from API: " + idMaKM);
                         verifyTrue(idMaKM.contains(schemeID), "Check schema vừa tạo có trong list API");
@@ -223,10 +217,9 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                             step(data);
                             Orders orderList = httangKemSPTheoBoiSoPage.getOrders(sku, quantity, company_id, agent_phone);
 
-                            Response rsp = postRequestJson(orderList, GlobalConstants.URL_API);
+                            Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
                             if (rsp.statusCode() == 200) {
-                                String idMaKM = getReponse(rsp, "promotions_allow_apply.id");
-                                String nameKM = getReponse(rsp, "promotions_allow_apply.name");
+                                String idMaKM = apiHelper.getReponse(rsp, "promotions_allow_apply.id");
                                 System.out.println("List schema from API: " + idMaKM);
                                 verifyTrue(!idMaKM.contains(schemeID), "Check schema vừa tạo không nằm trong list api");
                                 if (!idMaKM.contains(schemeID)) {
