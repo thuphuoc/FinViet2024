@@ -1,5 +1,6 @@
 package actions.pageobject.apdungtrensanpham;
 import actions.common.BasePage;
+import actions.common.BaseTest;
 import actions.common.GlobalConstants;
 import actions.helpers.ApiHelper;
 import actions.helpers.ExcelHelper;
@@ -8,8 +9,6 @@ import actions.pageobject.loaikhuyenmai.KhuyenMaiPO;
 import interfaces.khuyenmai.KhuyenMaiUI;
 import io.qameta.allure.Allure;
 import io.restassured.response.Response;
-import lombok.AllArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.openqa.selenium.WebDriver;
 import pojo.*;
 
@@ -19,47 +18,48 @@ import java.util.List;
 public class HTTangKemSPTheoBoiSoPO extends BasePage {
     private WebDriver driver;
     KhuyenMaiPO khuyenMaiPage;
+
     public HTTangKemSPTheoBoiSoPO(WebDriver driver) {
         this.driver = driver;
     }
 
-    public void themNoiDungHTTangKemSPTheoBoiSo(String loaiNoiDung, int dong, ExcelHelper excel){
-        if (excel.isCellHasData(loaiNoiDung,dong)) {
-            checkToDefaultCheckBox(driver,KhuyenMaiUI.RADIO_ND_DYM,loaiNoiDung);
-            khuyenMaiPage= GeneratorManager.getKhuyenMaiPage(driver);
+    public void themNoiDungHTTangKemSPTheoBoiSo(String loaiNoiDung, int dong, ExcelHelper excel) {
+        if (excel.isCellHasData(loaiNoiDung, dong)) {
+            checkToDefaultCheckBox(driver, KhuyenMaiUI.RADIO_ND_DYM, loaiNoiDung);
+            khuyenMaiPage = GeneratorManager.getKhuyenMaiPage(driver);
             switch (loaiNoiDung) {
-            case "Tặng kèm sản phẩm cùng loại":
-                String soLuong_TangKemSPCungLoai=excel.getCellData("Số Lượng_TangKemSPCungLoai", dong);
-                khuyenMaiPage.sendKeyByNameLabel(soLuong_TangKemSPCungLoai,"Số lượng");
-                break;
-            case "Tặng kèm sản phẩm trong danh sách":
-                String sku_NoiDung=excel.getCellData("SKU_SLKMTrenTungSP_TangKemSPTrongDS",dong);
-                String sl_ToiThieu=excel.getCellData("SLToiThieu_TangKemSPTrongDS",dong);
-                String sl_ToiDa=excel.getCellData("SLToiDa_TangKemSPTrongDS",dong);
-                String tongSLKM=excel.getCellData("TongSLKM_TangKemSPTrongDS",dong);
-                khuyenMaiPage.checkToDefaultCheckBox(driver,KhuyenMaiUI.RADIO_ND_DYM, "Tổng số lượng khuyến mãi");
-                khuyenMaiPage.themMoiNoiDungBangForm(sku_NoiDung,"SKU","Tìm kiếm sản phẩm");
-                khuyenMaiPage.senkeyToElement(driver,KhuyenMaiUI.THEM_SL_NOIDUNG,sl_ToiThieu,"Nhập vào số lượng tối thiếu");
-                khuyenMaiPage.senkeyToElement(driver,KhuyenMaiUI.THEM_SL_NOIDUNG,sl_ToiDa,"Nhập vào số lượng tối đa");
-                khuyenMaiPage.senkeyToElement(driver,KhuyenMaiUI.THEM_SL_NOIDUNG,tongSLKM,"Nhập vào tổng số lượng khuyến mãi");
-                break;
+                case "Tặng kèm sản phẩm cùng loại":
+                    String soLuong_TangKemSPCungLoai = excel.getCellData("Số Lượng_TangKemSPCungLoai", dong);
+                    khuyenMaiPage.sendKeyByNameLabel(soLuong_TangKemSPCungLoai, "Số lượng");
+                    break;
+                case "Tặng kèm sản phẩm trong danh sách":
+                    String sku_NoiDung = excel.getCellData("SKU_SLKMTrenTungSP_TangKemSPTrongDS", dong);
+                    String sl_ToiThieu = excel.getCellData("SLToiThieu_TangKemSPTrongDS", dong);
+                    String sl_ToiDa = excel.getCellData("SLToiDa_TangKemSPTrongDS", dong);
+                    String tongSLKM = excel.getCellData("TongSLKM_TangKemSPTrongDS", dong);
+                    khuyenMaiPage.checkToDefaultCheckBox(driver, KhuyenMaiUI.RADIO_ND_DYM, "Tổng số lượng khuyến mãi");
+                    khuyenMaiPage.themMoiNoiDungBangForm(sku_NoiDung, "SKU", "Tìm kiếm sản phẩm");
+                    khuyenMaiPage.senkeyToElement(driver, KhuyenMaiUI.THEM_SL_NOIDUNG, sl_ToiThieu, "Nhập vào số lượng tối thiếu");
+                    khuyenMaiPage.senkeyToElement(driver, KhuyenMaiUI.THEM_SL_NOIDUNG, sl_ToiDa, "Nhập vào số lượng tối đa");
+                    khuyenMaiPage.senkeyToElement(driver, KhuyenMaiUI.THEM_SL_NOIDUNG, tongSLKM, "Nhập vào tổng số lượng khuyến mãi");
+                    break;
+            }
+            threadSecond(2);
         }
-        threadSecond(2);
-    }
     }
 
-    public void inputFieldsTangKemSPCungLoai(String soLuong, String soLuongToiDaTrenDon, String soLuongToiDaTrenNguoi, String soLuongToiDaTrenCTKM){
-        if(soLuong!=""){
-            khuyenMaiPage.sendKeyByNameLabel(soLuong,"Số lượng");
+    public void inputFieldsTangKemSPCungLoai(String soLuong, String soLuongToiDaTrenDon, String soLuongToiDaTrenNguoi, String soLuongToiDaTrenCTKM) {
+        if (soLuong != "") {
+            khuyenMaiPage.sendKeyByNameLabel(soLuong, "Số lượng");
         }
-        if(soLuongToiDaTrenDon!=""){
-            khuyenMaiPage.sendKeyByNameLabel(soLuongToiDaTrenDon,"Số lượng tối đa/đơn");
+        if (soLuongToiDaTrenDon != "") {
+            khuyenMaiPage.sendKeyByNameLabel(soLuongToiDaTrenDon, "Số lượng tối đa/đơn");
         }
-        if(soLuongToiDaTrenNguoi!=""){
-            khuyenMaiPage.sendKeyByNameLabel(soLuongToiDaTrenNguoi,"Số lượng tối đa/người");
+        if (soLuongToiDaTrenNguoi != "") {
+            khuyenMaiPage.sendKeyByNameLabel(soLuongToiDaTrenNguoi, "Số lượng tối đa/người");
         }
-        if(soLuongToiDaTrenCTKM!=""){
-            khuyenMaiPage.sendKeyByNameLabel(soLuongToiDaTrenCTKM,"Số lượng tối đa/CTKM");
+        if (soLuongToiDaTrenCTKM != "") {
+            khuyenMaiPage.sendKeyByNameLabel(soLuongToiDaTrenCTKM, "Số lượng tối đa/CTKM");
         }
     }
 
@@ -91,29 +91,30 @@ public class HTTangKemSPTheoBoiSoPO extends BasePage {
 
     public List<GetSchemaIDAndSTT> getGetSchemaIDAndSTTS(ExcelHelper excel) {
         int soLuongDong = excel.countRowsHasData();
-        List<GetSchemaIDAndSTT> listSchemIDAndSTT= new ArrayList<GetSchemaIDAndSTT>();
+        List<GetSchemaIDAndSTT> listSchemIDAndSTT = new ArrayList<GetSchemaIDAndSTT>();
         for (int j = 1; j < soLuongDong; j++) {
             String schemeID = excel.getCellData("SchemaID", j);
-            System.out.println("SCHEMA THỨ " + j + ": " + schemeID);
-            Allure.step("SCHEMA THỨ  " + j + ": " + schemeID);
             String STT_Sheet_TangKemSPTheoBoiSo = excel.getCellData("STT", j);
             int targetValue = Integer.parseInt(STT_Sheet_TangKemSPTheoBoiSo);
-            listSchemIDAndSTT.add(new GetSchemaIDAndSTT(schemeID,targetValue));
+            listSchemIDAndSTT.add(new GetSchemaIDAndSTT(schemeID, targetValue));
         }
         return listSchemIDAndSTT;
     }
 
-    public String getIDKM(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID) {
+    public String getIdKMFromAPI(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID) {
         String sku = excel.getCellData("sku", i);
         int quantity = Integer.parseInt(excel.getCellData("quantity", i));
         String company_id = excel.getCellData("company_id", i);
         String agent_phone = excel.getCellData("agent_phone", i);
-        System.out.println("Data valid dòng " + i + " của schema: " + schemeID + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
-        Allure.step("Data valid dòng thứ " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
+        System.out.println("Data test dòng " + i + ": " + schemeID + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
+        Allure.step("Data test dòng  " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
         Orders orderList = getOrders(sku, quantity, company_id, agent_phone);
 
         Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
-
-        return apiHelper.getReponse(rsp, "promotions_allow_apply.id");
+        String listIdKM="";
+        if (rsp.statusCode() == 200) {
+            listIdKM= apiHelper.getReponse(rsp, "promotions_allow_apply.id");
+         }
+        return listIdKM;
     }
 }

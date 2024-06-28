@@ -15,7 +15,6 @@ import org.testng.annotations.Test;
 import pojo.GetSchemaIDAndSTT;
 import pojo.Orders;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class HTTangKemSPTheoBoiSo extends BaseTest {
@@ -51,7 +50,7 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
         khuyenMaiPage.loginPromotion(driver, GlobalConstants.USERNAME, GlobalConstants.PASSWORD);
     }
 
-    @Test(priority = 2)
+    @Test(priority = 1)
     public void TC001_TangKemSPTheoBoiSo_TaoKM() {
         excel.deleteColumnData("SchemaID");
         int soDongExcelCoData = excel.countRowsHasData();
@@ -94,7 +93,7 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                 khuyenMaiPage.guiXetDuyet(maCTKM_TaoScheme);
                 excel.setCellData(maCTKM_TaoScheme, i, "SchemaID");
                 if (i + 1 == soDongExcelCoData) {
-                    threadSecond(10);
+                    khuyenMaiPage.waitDangDienRa(maCTKM_TaoScheme);
                 }
             } catch (Exception e) {
                 excel.setCellData("FAIL TẠO SCHEMA", i, "SchemaID");
@@ -104,8 +103,8 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
         }
     }
 
-    @Test(priority = 3)
-    public void TC003_CallApi_Valid_Data() {
+    @Test(priority = 2)
+    public void TC002_CallApi_Valid_Data() {
         excel.setExcelFile(excelPath, sheetName_TangKemSPTheoBoiSo);
         List<GetSchemaIDAndSTT> listSchemIDAndSTT = httangKemSPTheoBoiSoPage.getGetSchemaIDAndSTTS(excel);
         
@@ -117,8 +116,8 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
             String schemeID = listSchemIDAndSTT.get(j).getSchemaID();
             int targetValue = listSchemIDAndSTT.get(j).getStt();
 
-            System.out.println("SCHEMA THỨ " + (j +1)+ ": " + schemeID);
-            step("SCHEMA THỨ  " + (j +1) + ": " + schemeID);
+            System.out.println("SCHEMA DÒNG " + (j+1) + ": " + schemeID);
+            step("SCHEMA DÒNG  " + (j +1)+ ": " + schemeID);
             List<Integer> positions = excel.findPositions(excel.indexColumByText("STT"), targetValue);
             if (!positions.isEmpty()) {
                 //Call api theo từng data test sheet valid_data
@@ -127,11 +126,11 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                         excel.setCellData("FAIL TẠO SCHEMA", i, "Kết quả");
                     } else {
                         try {
-                            String idMaKM = httangKemSPTheoBoiSoPage.getIDKM(excel, apiHelper, i, schemeID);
-                            System.out.println("List schema from API: " + idMaKM);
-                            step("List schema from API: " + idMaKM);
-                            verifyTrue(idMaKM.contains(schemeID), "Check schema vừa tạo có trong list API");
-                            if (idMaKM.contains(schemeID)) {
+                            String listIdMaKMFromAPI = httangKemSPTheoBoiSoPage.getIdKMFromAPI(excel, apiHelper, i, schemeID);
+                            System.out.println("List schema from API: " + listIdMaKMFromAPI);
+                            step("List schema from API: " + listIdMaKMFromAPI);
+                            verifyTrue(listIdMaKMFromAPI.contains(schemeID), "Check schema vừa tạo có trong list API");
+                            if (listIdMaKMFromAPI.contains(schemeID)) {
                                 excel.setCellData(schemeID, i, "Thực tế");
                                 excel.setCellData(schemeID, i, "Mong đợi");
                                 excel.setCellData("PASS", i, "Kết quả");
@@ -148,10 +147,59 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
             }else{
                 verifyFalse(true, "Result get index sheet valid fail ");
             }
+            System.out.println("");
         }
     }
 
-    @Test(priority = 4)
+    @Test(priority = 3)
+    public void TC003_CallApi_InValid_Data() {
+        excel.setExcelFile(excelPath, sheetName_TangKemSPTheoBoiSo);
+        List<GetSchemaIDAndSTT> listSchemIDAndSTT = httangKemSPTheoBoiSoPage.getGetSchemaIDAndSTTS(excel);
+
+        excel.setExcelFile(excelPath, sheetName_InvalidData);
+        excel.deleteColumnData("Mong đợi");
+        excel.deleteColumnData("Thực tế");
+
+        for (int j = 0; j < listSchemIDAndSTT.size(); j++) {
+            String schemeID = listSchemIDAndSTT.get(j).getSchemaID();
+            int targetValue = listSchemIDAndSTT.get(j).getStt();
+
+            System.out.println("SCHEMA DÒNG " + (j+1) + ": " + schemeID);
+            step("SCHEMA DÒNG  " + (j+1) + ": " + schemeID);
+            List<Integer> positions = excel.findPositions(excel.indexColumByText("STT"), targetValue);
+            if (!positions.isEmpty()) {
+                //Call api theo từng data test sheet valid_data
+                for (int i = positions.get(0); i <= positions.get(1); i++) {
+                    if (schemeID.equals("FAIL TẠO SCHEMA")) {
+                        excel.setCellData("FAIL TẠO SCHEMA", i, "Kết quả");
+                    } else {
+                        try {
+                            String listIdMaKMFromAPI = httangKemSPTheoBoiSoPage.getIdKMFromAPI(excel, apiHelper, i, schemeID);
+                            System.out.println("List schema from API: " + listIdMaKMFromAPI);
+                            step("List schema from API: " + listIdMaKMFromAPI);
+                            verifyTrue(!listIdMaKMFromAPI.contains(schemeID), "Check schema vừa tạo không nằm trong list api");
+                            if (!listIdMaKMFromAPI.contains(schemeID)) {
+                                excel.setCellData("", i, "Thực tế");
+                                excel.setCellData("", i, "Mong đợi");
+                                excel.setCellData("PASS", i, "Kết quả");
+                            } else {
+                                excel.setCellData(schemeID, i, "Thực tế");
+                                excel.setCellData("FAIL", i, "Kết quả");
+                            }
+                        } catch (Exception e) {
+                            verifyFalse(true, "Run row " + i + ": " + e.getMessage());
+                            System.err.println("Run row: " + i + " " + e.getMessage());
+                        }
+                    }
+                }
+            }else{
+                verifyFalse(true, "Result get index sheet valid fail ");
+            }
+            System.out.println("");
+        }
+    }
+
+//    @Test(priority = 4)
     public void TC004_CallApi_Invalid_Data() {
         excel.setExcelFile(excelPath, sheetName_InvalidData);
         excel.deleteColumnData("Mong đợi");

@@ -488,7 +488,7 @@ public class BasePage {
     }
     public String getDateTomorrow() {
         LocalDateTime currentDateTime = LocalDateTime.now();
-        LocalDateTime futureTime = currentDateTime.plusDays(20);
+        LocalDateTime futureTime = currentDateTime.plusMinutes(60);
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
         String formattedDateTime = futureTime.format(formatter);
         return formattedDateTime;

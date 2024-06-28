@@ -320,7 +320,7 @@ public class KhuyenMaiPO extends BasePage {
         while (!(textDangDienRa.equals("Đang diễn ra"))) {
             clickToBtnByText("Tìm kiếm");
             textDangDienRa = getTrangThaiKM();
-            threadSecond(10);
+            threadSecond(7);
         }
     }
 
