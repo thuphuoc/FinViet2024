@@ -98,7 +98,7 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
             } catch (Exception e) {
                 excel.setCellData("FAIL TẠO SCHEMA", i, "SchemaID");
                 verifyFalse(true, "Run row " + i + ": " + e.getMessage());
-                System.err.println("Run row " + i + ": " + e.getMessage());
+//                System.err.println("Run row " + i + ": " + e.getMessage());
             }
         }
     }
@@ -188,7 +188,7 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                             }
                         } catch (Exception e) {
                             verifyFalse(true, "Run row " + i + ": " + e.getMessage());
-                            System.err.println("Run row: " + i + " " + e.getMessage());
+//                            System.err.println("Run row: " + i + " " + e.getMessage());
                         }
                     }
                 }

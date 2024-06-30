@@ -269,15 +269,16 @@ public class KhuyenMaiPO extends BasePage {
     }
 
     public void unCheckThietLapMa() {
-        threadSecond(2);
-        unCheckToDefaultCheckBox(driver, KhuyenMaiUI.SUDUNGMA_RADIO);
-        String attributeRadio = getElementAtribute(driver, KhuyenMaiUI.SUDUNGMA_RADIO_ATTRIBUTE, "class");
-        while (attributeRadio.equals("ant-checkbox ant-checkbox-checked")) {
-            unCheckToDefaultCheckBox(driver, KhuyenMaiUI.SUDUNGMA_RADIO);
-            attributeRadio = getElementAtribute(driver, KhuyenMaiUI.SUDUNGMA_RADIO_ATTRIBUTE, "class");
+        int sizeRadio = getElementSize(driver,KhuyenMaiUI.SUDUNGMA_RADIO);
+        int demClickTimKiem = 0;
+        while (sizeRadio==0 && demClickTimKiem < 5) {
+            threadSecond(1);
+            demClickTimKiem++;
+            sizeRadio = getElementSize(driver,KhuyenMaiUI.SUDUNGMA_RADIO);
         }
+        unCheckToDefaultCheckBox(driver, KhuyenMaiUI.SUDUNGMA_RADIO);
         clickToElement(driver, KhuyenMaiUI.BTN_DSCTKM_DYM, "Lưu");
-        threadSecond(2);
+        threadSecond(1);
     }
 
     public void searchKhuyenMai(String textSendKey, String searchTheoField) {
