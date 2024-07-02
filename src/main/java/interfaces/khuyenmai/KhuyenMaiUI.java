@@ -21,6 +21,7 @@ public class KhuyenMaiUI {
     public static final String AREA_DYM = "xpath=//textarea[@placeholder='%s']";
     public static final String NGAYBATDAU = "xpath=//input[@id='range_time']";
     public static final String NGAYKETTHUC = "xpath=//input[@placeholder='Chọn thời gian kết thúc']";
+    public static final String ERROR = "xpath=//div[@class='ant-form-item-explain-error']";
     public static final String PLACEHOLDER_TXT_DYM = "xpath=//input[@placeholder='%s']";
     public static final String LOAIKM_DYM = "xpath=//div[text()='%s']/ancestor::label/parent::div//following-sibling::div//div[@class='ant-select-selector']";
     public static final String CHILD_LOAIKM = "xpath=//div[@id='type_list']/following-sibling::div//div[contains(@class,'content')]";

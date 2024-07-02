@@ -11,6 +11,7 @@ import actions.utils.LogUtils;
 import com.google.gson.Gson;
 import io.qameta.allure.Allure;
 import io.qameta.allure.model.Status;
+import io.qameta.allure.model.StepResult;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
 import org.openqa.selenium.OutputType;
@@ -90,22 +91,26 @@ public class BaseTest {
 //            if(DriverManager.getDriver() == null) {
 //                Allure.step(mess+ " | FAILED", Status.FAILED);
 //            }else {
-                Allure.step(mess, () -> {
-                    String uuid = startStepAndGetUuid();
-                    try {
-                        Allure.getLifecycle().updateStep(uuid, stepResult -> {stepResult.setStatus(Status.FAILED);});
-                        captureScreenshot();
-                        Allure.getLifecycle().stopStep(uuid);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
+              setStepFail(mess);
 //            }
             pass = false;
             VerificationFailures.getFailures().addFailureForTest(Reporter.getCurrentTestResult(), e);
             Reporter.getCurrentTestResult().setThrowable(e);
         }
         return pass;
+    }
+
+    private void setStepFail(String message) {
+        String uuid = java.util.UUID.randomUUID().toString();
+        System.out.println("Starting step with UUID: " + uuid); // In UUID để kiểm tra
+
+        // Tạo StepResult và bắt đầu step
+        StepResult stepResult = new StepResult().setName(message);
+        Allure.getLifecycle().startStep(uuid, stepResult);
+        Allure.getLifecycle().updateStep(uuid, result -> result.setStatus(Status.FAILED));
+        // Chụp ảnh màn hình và thêm vào step của báo cáo Allure
+        captureScreenshot();
+        Allure.getLifecycle().stopStep(uuid);
     }
 
     protected boolean verifyFalse(boolean condition, String mess) {
@@ -121,16 +126,7 @@ public class BaseTest {
 //            if(DriverManager.getDriver() == null) {
 //                Allure.step(mess+ " | FAILED", Status.FAILED);
 //            }else {
-                Allure.step(mess, () -> {
-                    String uuid = startStepAndGetUuid();
-                    try {
-                        Allure.getLifecycle().updateStep(uuid, stepResult -> {stepResult.setStatus(Status.FAILED);});
-                        captureScreenshot();
-                        Allure.getLifecycle().stopStep(uuid);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
+             setStepFail(mess);
 //            }
             pass = false;
             LogUtils.info(mess+ " | FAILED");
@@ -156,16 +152,7 @@ public class BaseTest {
 //            if(DriverManager.getDriver() == null) {
 //                Allure.step(mess+ " | FAILED", Status.FAILED);
 //            }else {
-                Allure.step(mess, () -> {
-                    String uuid = startStepAndGetUuid();
-                    try {
-                        Allure.getLifecycle().updateStep(uuid, stepResult -> {stepResult.setStatus(Status.FAILED);});
-                        captureScreenshot();
-                        Allure.getLifecycle().stopStep(uuid);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                });
+               setStepFail(mess);
 //            }
 //            LogUtils.info(" -------------------------- FAILED -------------------------- ");
             VerificationFailures.getFailures().addFailureForTest(Reporter.getCurrentTestResult(), e);

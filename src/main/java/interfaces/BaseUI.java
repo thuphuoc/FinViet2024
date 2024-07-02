@@ -6,5 +6,4 @@ public class BaseUI {
     public static final String LOGIN_SSO_BTN = "xpath=//button[@type='submit']";
     public static final String USERNAME_TXTBOX = "id=username";
     public static final String PASSWORD_TXTBOX = "id=password";
-    public static final String H1_TEXT = "xpath=//h1";
 }

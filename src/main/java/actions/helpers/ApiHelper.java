@@ -5,6 +5,10 @@ import com.google.gson.Gson;
 import io.qameta.allure.Allure;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import pojo.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.restassured.RestAssured.given;
 
@@ -27,5 +31,60 @@ public class ApiHelper {
 
     public String getReponse(Response rsp, String jsonPath) {
         return rsp.getBody().path(jsonPath).toString();
+    }
+
+    public Orders getOrders(String sku, int quantity, String company_id, String agent_phone) {
+        HowToLoad howToLoadPojo = new HowToLoad(true, "VALID_PROMOTION", "SELF_PICK", false, 0);
+        Product proDct = new Product(sku, 11111, quantity, howToLoadPojo);
+        List<Product> products = new ArrayList<>();
+        Order orderPojo = new Order(products, company_id, "CodChannel", 66666, howToLoadPojo);
+
+        products.add(proDct);
+        List<Order> orders = new ArrayList<>();
+        orders.add(orderPojo);
+
+        Orders orderList = new Orders(
+                orders,
+                agent_phone,
+                null,
+                "ecomv2",
+                "CodChannel",
+                66666,
+                howToLoadPojo,
+                "",
+                "",
+                false,
+                false
+        );
+        return orderList;
+    }
+
+    public List<GetSchemaIDAndSTT> getGetSchemaIDAndSTTS(ExcelHelper excel) {
+        int soLuongDong = excel.countRowsHasData();
+        List<GetSchemaIDAndSTT> listSchemIDAndSTT = new ArrayList<GetSchemaIDAndSTT>();
+        for (int j = 1; j < soLuongDong; j++) {
+            String schemeID = excel.getCellData("SchemaID", j);
+            String STT_Sheet_TangKemSPTheoBoiSo = excel.getCellData("STT", j);
+            int targetValue = Integer.parseInt(STT_Sheet_TangKemSPTheoBoiSo);
+            listSchemIDAndSTT.add(new GetSchemaIDAndSTT(schemeID, targetValue));
+        }
+        return listSchemIDAndSTT;
+    }
+
+    public String getReponseKMFromAPI(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID, String jsonPath) {
+        String sku = excel.getCellData("sku", i);
+        int quantity = Integer.parseInt(excel.getCellData("quantity", i));
+        String company_id = excel.getCellData("company_id", i);
+        String agent_phone = excel.getCellData("agent_phone", i);
+        System.out.println("Data test dòng " + i + ": " + schemeID + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
+        Allure.step("Data test dòng  " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
+        Orders orderList = getOrders(sku, quantity, company_id, agent_phone);
+
+        Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
+        String listIdKM="";
+        if (rsp.statusCode() == 200) {
+            listIdKM= apiHelper.getReponse(rsp, jsonPath);
+        }
+        return listIdKM;
     }
 }

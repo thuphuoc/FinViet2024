@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Set;
 
 import interfaces.BaseUI;
-import interfaces.khuyenmai.KhuyenMaiUI;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.Color;
@@ -456,29 +455,6 @@ public class BasePage {
         }
     }
 
-    public int countItemByComma(String input) {
-        int item;
-        if(input.contains(",")) {
-            String[] parts = input.split(",");
-            item= parts.length;
-        }else{
-            item=1;
-        }
-        return item;
-    }
-
-    public int countItemByvertical(String input) {
-        int item;
-        if(input.contains("|")) {
-            String[] parts = input.split("\\|");
-            item= parts.length;
-        }else{
-            item=1;
-        }
-        return item;
-    }
-
-
     public String getDateTimeNow() {
         LocalDateTime currentDateTime = LocalDateTime.now();
         LocalDateTime futureTime = currentDateTime.plusMinutes(2);
@@ -505,5 +481,9 @@ public class BasePage {
         senkeyToElement(driver, BaseUI.PASSWORD_TXTBOX, password);
         clickToElement(driver, BaseUI.DYNAMIC_BTN, "Đăng nhập");
         threadSecond(3);
+    }
+
+    public String[] phanTachDauPhay(String text){
+       return  text.split(",");
     }
 }

@@ -20,12 +20,18 @@ public class KhuyenMaiPO extends BasePage {
 
     public void searchNhapMaNCC(String maNCC) {
         senkeyToElement(driver, KhuyenMaiUI.SEARCH_DYM, maNCC, "Mã NCC");
-        threadSecond(2);
         clickToElement(driver, KhuyenMaiUI.TIMKIEM_NCC_DMY, "Tìm kiếm");
-        threadSecond(2);
+        threadSecond(1);
+        int sizeRadio=getElementSize(driver, KhuyenMaiUI.CHONNCC_CHECKBOX);
+        int demClickTimKiem = 0;
+        while (sizeRadio != 1 && demClickTimKiem < 5) {
+            demClickTimKiem++;
+            clickToElement(driver, KhuyenMaiUI.TIMKIEM_NCC_DMY, "Tìm kiếm");
+            threadSecond(5);
+            sizeRadio=getElementSize(driver, KhuyenMaiUI.CHONNCC_CHECKBOX);
+        }
         clickToElement(driver, KhuyenMaiUI.CHONNCC_CHECKBOX);
         clickToElement(driver, KhuyenMaiUI.BTN_DSCTKM_DYM, "Đồng ý");
-        threadSecond(2);
     }
 
     public void taoThongTinCoBanKM(String[] kenhMuaHang, String textChung, String loaiKM, String hinhThucKM, String mucdoHienThi, String loaiCT) {
@@ -35,6 +41,7 @@ public class KhuyenMaiPO extends BasePage {
         senkeyToElement(driver, KhuyenMaiUI.AREA_DYM, textChung, "Nhập tên hiển thị trên portal");
         senkeyToElement(driver, KhuyenMaiUI.AREA_DYM, textChung, "Nhập tên hiển thị trên app");
 
+        clickToElement(driver, KhuyenMaiUI.NGAYBATDAU);
         removeAttributeInDOM(driver, KhuyenMaiUI.NGAYBATDAU, "readonly");
         senkeyToElement(driver, KhuyenMaiUI.NGAYBATDAU, getDateTimeNow());
         removeAttributeInDOM(driver, KhuyenMaiUI.NGAYKETTHUC, "readonly");
@@ -49,8 +56,23 @@ public class KhuyenMaiPO extends BasePage {
         senkeyToElement(driver, KhuyenMaiUI.AREA_DYM, textChung, "Nhập nội dung");
         senkeyToElement(driver, KhuyenMaiUI.AREA_DYM, textChung, "Nhập mô tả");
         senkeyToElement(driver, KhuyenMaiUI.THELECHUONGTRINH_TXT, textChung);
+
+        String valueNgayBatDau=getElementAtribute(driver,KhuyenMaiUI.NGAYBATDAU,"value");
+        int error=getElementSize(driver,KhuyenMaiUI.ERROR);
+        while(valueNgayBatDau.isEmpty() || error!=0){
+            System.out.println("valueNgayBatDau: "+valueNgayBatDau);
+            removeAttributeInDOM(driver, KhuyenMaiUI.NGAYBATDAU, "readonly");
+            senkeyToElement(driver, KhuyenMaiUI.NGAYBATDAU, getDateTimeNow());
+            threadSecond(1);
+            removeAttributeInDOM(driver, KhuyenMaiUI.NGAYKETTHUC, "readonly");
+            senkeyToElement(driver, KhuyenMaiUI.NGAYKETTHUC, getDateTomorrow());
+            threadSecond(1);
+            pressEnter(driver);
+            valueNgayBatDau=getElementAtribute(driver,KhuyenMaiUI.NGAYBATDAU,"value");
+            getElementSize(driver,KhuyenMaiUI.ERROR);
+        }
+        threadSecond(1);
         clickToElement(driver, KhuyenMaiUI.TIEPTUC_BTN);
-        threadSecond(2);
     }
 
     public void themMoiDieuKienBangForm(String loaiDieuKien, String textSearch, String typeSearch, String formSearch) {
@@ -121,6 +143,7 @@ public class KhuyenMaiPO extends BasePage {
 
 
     public void hinhThucApDungGoiKM(int dong, ExcelHelper excel) {
+        threadSecond(2);
         if (excel.isCellHasData("Hình thức áp dụng gói khuyến mãi", dong)) {
             String hinhThucADGoiKM = excel.getCellData("Hình thức áp dụng gói khuyến mãi", dong);
             selectItemCustomDropDown(driver, KhuyenMaiUI.DROPDOWN_PARENT_DYM, KhuyenMaiUI.CHILD_HTADCTKM_DYM, hinhThucADGoiKM, "Hình thức áp dụng gói khuyến mãi");
@@ -133,10 +156,6 @@ public class KhuyenMaiPO extends BasePage {
             threadSecond(1);
             chonDieuKien(loaiDieuKien);
             switch (loaiDieuKien) {
-                case "Tổng giá trị giỏ hàng":
-                    chonPhuongThuc("Lớn hơn hoặc bằng");
-                    sendKeyByNameLabel("10000", "Tổng số tiền trên giỏ");
-                    break;
                 case "Tổng số lượng nhóm sản phẩm":
                     String phuongThuc_TongSLSP = excel.getCellData("", dong);
                     chonPhuongThuc("Lớn hơn");
@@ -148,36 +167,24 @@ public class KhuyenMaiPO extends BasePage {
                     chonPhuongThuc(phuongThuc_PTTT);
                     selectItemCustomDropDown(driver, KhuyenMaiUI.PLACEHOlDER_PARENT, KhuyenMaiUI.CHILD_PTTT, phuongThucThanhToan_PTTT, "Vui lòng chọn");
                     break;
-                case "Thời gian đặt hàng":
-                    chonPhuongThuc("Bao gồm");
-                    selectItemCustomDropDown(driver, KhuyenMaiUI.PLACEHOlDER_PARENT, KhuyenMaiUI.CHILD_TGDAT, "Ngày trong tuần", "Vui lòng chọn");
-                    checkToDefaultCheckBox(driver, KhuyenMaiUI.RADIO_TIME_DYM, "Thứ hai");
-                    break;
                 case "Danh sách sản phẩm":
                     String phuongThuc_DSSP = excel.getCellData("Phương thức_DSSP", dong);
                     String sku = excel.getCellData("SKU_DSSP", dong);
                     chonPhuongThuc(phuongThuc_DSSP);
-                    themMoiDieuKienBangForm(loaiDieuKien, sku, "SKU", "Tìm kiếm sản phẩm");
+                    for(int i =0 ; i< phanTachDauPhay(sku).length; i++){
+                        String skuItem=phanTachDauPhay(sku)[i];
+                        themMoiDieuKienBangForm(loaiDieuKien, skuItem, "SKU", "Tìm kiếm sản phẩm");
+                    }
                     break;
                 case " Danh sách NPP":
                     String phuongThuc_DSNPP = excel.getCellData("Phương thức_DSNPP", dong);
-                    String MaNPP_DSNPP = excel.getCellData("MaNPP_DSNPP", dong);
                     chonPhuongThuc(phuongThuc_DSNPP);
-                    themMoiDieuKienBangForm(loaiDieuKien, MaNPP_DSNPP, "Mã NPP", "Tìm kiếm Nhà phân phối");
+                    String MaNPP_DSNPP = excel.getCellData("MaNPP_DSNPP", dong);
+                    for(int i =0 ; i< phanTachDauPhay(MaNPP_DSNPP).length; i++){
+                        String maNPPItem=phanTachDauPhay(MaNPP_DSNPP)[i];
+                        themMoiDieuKienBangForm(loaiDieuKien, maNPPItem, "Mã NPP", "Tìm kiếm Nhà phân phối");
+                    }
                     break;
-                case "Số lượng sản phẩm":
-                    String phuongThuc_SLSP = excel.getCellData("Phương thức_SLSP", dong);
-                    String soLuongSP_SLSP = excel.getCellData("Số Lượng_SLSP", dong);
-                    chonPhuongThuc(phuongThuc_SLSP);
-                    sendKeyByNameLabel(soLuongSP_SLSP, "Số lượng sản phẩm");
-                    break;
-                case "Giá trị sản phẩm":
-                    String phuongThuc_GTSP = excel.getCellData("Phương thức_GTSP", dong);
-                    String giaTriSP_GTSP = excel.getCellData("Giá trị sản phẩm_GTSP", dong);
-                    chonPhuongThuc(phuongThuc_GTSP);
-                    sendKeyByNameLabel(giaTriSP_GTSP, "Giá trị sản phẩm");
-                    break;
-
                 case "Số lần đã mua hàng":
                     String phuongThuc_SoLanMH = excel.getCellData("Phương thức_SoLanMH", dong);
                     String soLanDaMuaHang = excel.getCellData("Số lần đã mua hàng_SoLanMH", dong);
@@ -220,10 +227,13 @@ public class KhuyenMaiPO extends BasePage {
                 case "Đối tượng thuộc số điện thoại":
                     chonDoiTuong(loaiDoiTuong);
                     String phuongThuc_DTThuocSoDT = excel.getCellData("Phương thức_DTThuocSoDT", dong);
-                    String soDT = excel.getCellData("Số điện thoại_DTThuocSoDT", dong);
                     chonPhuongThuc(phuongThuc_DTThuocSoDT);
-                    sendKeyByNameLabel(soDT, "Số điện thoại");
-                    clickToBtnByText("Thêm số");
+                    String soDT = excel.getCellData("Số điện thoại_DTThuocSoDT", dong);
+                    for(int i =0 ; i< phanTachDauPhay(soDT).length; i++){
+                        String soDTItem=phanTachDauPhay(soDT)[i];
+                        sendKeyByNameLabel(soDTItem, "Số điện thoại");
+                        clickToBtnByText("Thêm số");
+                    }
                     break;
             }
             threadSecond(2);

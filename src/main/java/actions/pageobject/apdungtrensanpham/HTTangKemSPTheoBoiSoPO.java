@@ -1,29 +1,22 @@
 package actions.pageobject.apdungtrensanpham;
 import actions.common.BasePage;
-import actions.common.BaseTest;
-import actions.common.GlobalConstants;
-import actions.helpers.ApiHelper;
 import actions.helpers.ExcelHelper;
 import actions.pageobject.GeneratorManager;
 import actions.pageobject.loaikhuyenmai.KhuyenMaiPO;
 import interfaces.khuyenmai.KhuyenMaiUI;
-import io.qameta.allure.Allure;
-import io.restassured.response.Response;
-import org.openqa.selenium.WebDriver;
-import pojo.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.openqa.selenium.WebDriver;
 
 public class HTTangKemSPTheoBoiSoPO extends BasePage {
     private WebDriver driver;
     KhuyenMaiPO khuyenMaiPage;
 
+
     public HTTangKemSPTheoBoiSoPO(WebDriver driver) {
         this.driver = driver;
     }
 
-    public void themNoiDungHTTangKemSPTheoBoiSo(String loaiNoiDung, int dong, ExcelHelper excel) {
+    public void themNoiDung(String loaiNoiDung, int dong, ExcelHelper excel) {
         if (excel.isCellHasData(loaiNoiDung, dong)) {
             checkToDefaultCheckBox(driver, KhuyenMaiUI.RADIO_ND_DYM, loaiNoiDung);
             khuyenMaiPage = GeneratorManager.getKhuyenMaiPage(driver);
@@ -48,6 +41,42 @@ public class HTTangKemSPTheoBoiSoPO extends BasePage {
         }
     }
 
+    public void themDieuKien(String loaiDieuKien, int dong, ExcelHelper excel) {
+        khuyenMaiPage = GeneratorManager.getKhuyenMaiPage(driver);
+        if (excel.isCellHasData(loaiDieuKien, dong)) {
+            clickToElement(driver, KhuyenMaiUI.THEMDK_THEONHOM_BTN, "Điều kiện áp dụng", "Thêm điều kiện");
+            threadSecond(1);
+            khuyenMaiPage.chonDieuKien(loaiDieuKien);
+            switch (loaiDieuKien) {
+                case "Tổng số lượng nhóm sản phẩm":
+                    String phuongThuc_TongSLSP = excel.getCellData("", dong);
+                    khuyenMaiPage.chonPhuongThuc("Lớn hơn");
+                    khuyenMaiPage.sendKeyByNameLabel("2", "Tổng số lượng nhóm sản phẩm");
+                    break;
+                case "Số lượng sản phẩm":
+                    String phuongThuc_SLSP = excel.getCellData("Phương thức_SLSP", dong);
+                    String soLuongSP_SLSP = excel.getCellData("Số Lượng_SLSP", dong);
+                    khuyenMaiPage.chonPhuongThuc(phuongThuc_SLSP);
+                    khuyenMaiPage.sendKeyByNameLabel(soLuongSP_SLSP, "Số lượng sản phẩm");
+                    break;
+                case "Giá trị sản phẩm":
+                    String phuongThuc_GTSP = excel.getCellData("Phương thức_GTSP", dong);
+                    String giaTriSP_GTSP = excel.getCellData("Giá trị sản phẩm_GTSP", dong);
+                    khuyenMaiPage.chonPhuongThuc(phuongThuc_GTSP);
+                    khuyenMaiPage.sendKeyByNameLabel(giaTriSP_GTSP, "Giá trị sản phẩm");
+                    break;
+
+                case "Số lần đã mua hàng":
+                    String phuongThuc_SoLanMH = excel.getCellData("Phương thức_SoLanMH", dong);
+                    String soLanDaMuaHang = excel.getCellData("Số lần đã mua hàng_SoLanMH", dong);
+                    khuyenMaiPage.chonPhuongThuc(phuongThuc_SoLanMH);
+                    khuyenMaiPage.sendKeyByNameLabel(soLanDaMuaHang, "Số lần đã mua hàng");
+                    break;
+            }
+            threadSecond(2);
+        }
+    }
+
     public void inputFieldsTangKemSPCungLoai(String soLuong, String soLuongToiDaTrenDon, String soLuongToiDaTrenNguoi, String soLuongToiDaTrenCTKM) {
         if (soLuong != "") {
             khuyenMaiPage.sendKeyByNameLabel(soLuong, "Số lượng");
@@ -63,58 +92,4 @@ public class HTTangKemSPTheoBoiSoPO extends BasePage {
         }
     }
 
-    public Orders getOrders(String sku, int quantity, String company_id, String agent_phone) {
-        HowToLoad howToLoadPojo = new HowToLoad(true, "VALID_PROMOTION", "SELF_PICK", false, 0);
-        Product proDct = new Product(sku, 11111, quantity, howToLoadPojo);
-        List<Product> products = new ArrayList<>();
-        Order orderPojo = new Order(products, company_id, "CodChannel", 66666, howToLoadPojo);
-
-        products.add(proDct);
-        List<Order> orders = new ArrayList<>();
-        orders.add(orderPojo);
-
-        Orders orderList = new Orders(
-                orders,
-                agent_phone,
-                null,
-                "ecomv2",
-                "CodChannel",
-                66666,
-                howToLoadPojo,
-                "",
-                "",
-                false,
-                false
-        );
-        return orderList;
-    }
-
-    public List<GetSchemaIDAndSTT> getGetSchemaIDAndSTTS(ExcelHelper excel) {
-        int soLuongDong = excel.countRowsHasData();
-        List<GetSchemaIDAndSTT> listSchemIDAndSTT = new ArrayList<GetSchemaIDAndSTT>();
-        for (int j = 1; j < soLuongDong; j++) {
-            String schemeID = excel.getCellData("SchemaID", j);
-            String STT_Sheet_TangKemSPTheoBoiSo = excel.getCellData("STT", j);
-            int targetValue = Integer.parseInt(STT_Sheet_TangKemSPTheoBoiSo);
-            listSchemIDAndSTT.add(new GetSchemaIDAndSTT(schemeID, targetValue));
-        }
-        return listSchemIDAndSTT;
-    }
-
-    public String getIdKMFromAPI(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID) {
-        String sku = excel.getCellData("sku", i);
-        int quantity = Integer.parseInt(excel.getCellData("quantity", i));
-        String company_id = excel.getCellData("company_id", i);
-        String agent_phone = excel.getCellData("agent_phone", i);
-        System.out.println("Data test dòng " + i + ": " + schemeID + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
-        Allure.step("Data test dòng  " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
-        Orders orderList = getOrders(sku, quantity, company_id, agent_phone);
-
-        Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
-        String listIdKM="";
-        if (rsp.statusCode() == 200) {
-            listIdKM= apiHelper.getReponse(rsp, "promotions_allow_apply.id");
-         }
-        return listIdKM;
-    }
 }

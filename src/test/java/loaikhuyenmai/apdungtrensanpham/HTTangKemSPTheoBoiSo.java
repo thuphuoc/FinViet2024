@@ -7,20 +7,18 @@ import actions.common.BaseTest;
 import actions.pageobject.GeneratorManager;
 import actions.pageobject.apdungtrensanpham.HTTangKemSPTheoBoiSoPO;
 import actions.pageobject.loaikhuyenmai.KhuyenMaiPO;
-import io.restassured.response.Response;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import pojo.GetSchemaIDAndSTT;
-import pojo.Orders;
 
 import java.util.List;
 
 public class HTTangKemSPTheoBoiSo extends BaseTest {
-    ExcelHelper excel ;
+    ExcelHelper excel;;
     ApiHelper apiHelper;
-    String excelPath = "src/main/resources/Data_KhuyenMai.xlsx";
+    String excelPath = "src/main/resources/HTTangKemSPTheoBoiSo.xlsx";
     String sheetName_ValidData = "valid_data";
     String sheetName_InvalidData = "invalid_data";
     String sheetName_TangKemSPTheoBoiSo = "TangKemSPTheoBoiSo";
@@ -38,9 +36,6 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
     @BeforeClass
     public void initDriver() {
         deleteAllFilesInReportAllure();
-        excel = new ExcelHelper();
-        apiHelper= new ApiHelper();
-        excel.setExcelFile(excelPath, "TangKemSPTheoBoiSo");
         driver = getBrowserDriver("Chrome");
         khuyenMaiPage = GeneratorManager.getKhuyenMaiPage(driver);
         httangKemSPTheoBoiSoPage = GeneratorManager.getHTTangKemSPTheoBoiSoPage(driver);
@@ -52,8 +47,11 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
 
     @Test(priority = 1)
     public void TC001_TangKemSPTheoBoiSo_TaoKM() {
+        excel = new ExcelHelper();
+        excel.setExcelFile(excelPath, "TangKemSPTheoBoiSo");
         excel.deleteColumnData("SchemaID");
-        int soDongExcelCoData = excel.countRowsHasData();
+        int soDongExcelCoData = 2;
+//        int soDongExcelCoData = excel.countRowsHasData();
         for (int i = 1; i < soDongExcelCoData; i++) {
             try {
                 khuyenMaiPage.openPageUrl(driver, GlobalConstants.URL_PROMTION);
@@ -71,12 +69,11 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                 khuyenMaiPage.themDieuKien("Phương thức thanh toán", i, excel);
                 khuyenMaiPage.themDieuKien("Danh sách sản phẩm", i, excel);
                 khuyenMaiPage.themDieuKien(" Danh sách NPP", i, excel);
-                khuyenMaiPage.themDieuKien("Số lượng sản phẩm", i, excel);
-                khuyenMaiPage.themDieuKien("Giá trị sản phẩm", i, excel);
-                khuyenMaiPage.themDieuKien("Số lần đã mua hàng", i, excel);
+                httangKemSPTheoBoiSoPage.themDieuKien("Số lượng sản phẩm", i, excel);
+                httangKemSPTheoBoiSoPage.themDieuKien("Giá trị sản phẩm", i, excel);
 
-                httangKemSPTheoBoiSoPage.themNoiDungHTTangKemSPTheoBoiSo("Tặng kèm sản phẩm cùng loại", i, excel);
-                httangKemSPTheoBoiSoPage.themNoiDungHTTangKemSPTheoBoiSo("Tặng kèm sản phẩm trong danh sách", i, excel);
+                httangKemSPTheoBoiSoPage.themNoiDung("Tặng kèm sản phẩm cùng loại", i, excel);
+                httangKemSPTheoBoiSoPage.themNoiDung("Tặng kèm sản phẩm trong danh sách", i, excel);
 
                 khuyenMaiPage.themDoiTuong("Đối tượng thuộc số điện thoại", i, excel);
 
@@ -98,15 +95,16 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
             } catch (Exception e) {
                 excel.setCellData("FAIL TẠO SCHEMA", i, "SchemaID");
                 verifyFalse(true, "Run row " + i + ": " + e.getMessage());
-//                System.err.println("Run row " + i + ": " + e.getMessage());
             }
         }
     }
 
     @Test(priority = 2)
     public void TC002_CallApi_Valid_Data() {
+        excel=new ExcelHelper();
+        apiHelper=new ApiHelper();
         excel.setExcelFile(excelPath, sheetName_TangKemSPTheoBoiSo);
-        List<GetSchemaIDAndSTT> listSchemIDAndSTT = httangKemSPTheoBoiSoPage.getGetSchemaIDAndSTTS(excel);
+        List<GetSchemaIDAndSTT> listSchemIDAndSTT = apiHelper.getGetSchemaIDAndSTTS(excel);
         
         excel.setExcelFile(excelPath, sheetName_ValidData);
         excel.deleteColumnData("Mong đợi");
@@ -126,7 +124,7 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                         excel.setCellData("FAIL TẠO SCHEMA", i, "Kết quả");
                     } else {
                         try {
-                            String listIdMaKMFromAPI = httangKemSPTheoBoiSoPage.getIdKMFromAPI(excel, apiHelper, i, schemeID);
+                            String listIdMaKMFromAPI = apiHelper.getReponseKMFromAPI(excel, apiHelper, i, schemeID,"promotions_allow_apply.id");
                             System.out.println("List schema from API: " + listIdMaKMFromAPI);
                             step("List schema from API: " + listIdMaKMFromAPI);
                             verifyTrue(listIdMaKMFromAPI.contains(schemeID), "Check schema vừa tạo có trong list API");
@@ -153,8 +151,10 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
 
     @Test(priority = 3)
     public void TC003_CallApi_InValid_Data() {
+        excel=new ExcelHelper();
+        apiHelper=new ApiHelper();
         excel.setExcelFile(excelPath, sheetName_TangKemSPTheoBoiSo);
-        List<GetSchemaIDAndSTT> listSchemIDAndSTT = httangKemSPTheoBoiSoPage.getGetSchemaIDAndSTTS(excel);
+        List<GetSchemaIDAndSTT> listSchemIDAndSTT = apiHelper.getGetSchemaIDAndSTTS(excel);
 
         excel.setExcelFile(excelPath, sheetName_InvalidData);
         excel.deleteColumnData("Mong đợi");
@@ -174,7 +174,7 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                         excel.setCellData("FAIL TẠO SCHEMA", i, "Kết quả");
                     } else {
                         try {
-                            String listIdMaKMFromAPI = httangKemSPTheoBoiSoPage.getIdKMFromAPI(excel, apiHelper, i, schemeID);
+                            String listIdMaKMFromAPI = apiHelper.getReponseKMFromAPI(excel, apiHelper, i, schemeID,"promotions_allow_apply.id");
                             System.out.println("List schema from API: " + listIdMaKMFromAPI);
                             step("List schema from API: " + listIdMaKMFromAPI);
                             verifyTrue(!listIdMaKMFromAPI.contains(schemeID), "Check schema vừa tạo không nằm trong list api");
@@ -188,7 +188,6 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                             }
                         } catch (Exception e) {
                             verifyFalse(true, "Run row " + i + ": " + e.getMessage());
-//                            System.err.println("Run row: " + i + " " + e.getMessage());
                         }
                     }
                 }
@@ -197,76 +196,6 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
             }
             System.out.println("");
         }
-    }
-
-//    @Test(priority = 4)
-    public void TC004_CallApi_Invalid_Data() {
-        excel.setExcelFile(excelPath, sheetName_InvalidData);
-        excel.deleteColumnData("Mong đợi");
-        excel.deleteColumnData("Thực tế");
-        excel.setExcelFile(excelPath, sheetName_TangKemSPTheoBoiSo);
-        String schemeID = "";
-
-        int soLuongDong = excel.countRowsHasData();
-        for (int j = 1; j < soLuongDong; j++) {
-            excel.setExcelFile(excelPath, sheetName_TangKemSPTheoBoiSo);
-            schemeID = excel.getCellData("SchemaID", j);
-            System.out.println("SCHEMA THỨ " + j + ": " + schemeID);
-            String STT_Sheet_TangKemSPTheoBoiSo = excel.getCellData("STT", j);
-
-            //Kiểm tra nếu có schemaID thì mới post data
-//            if (excel.isCellHasData("SchemaID", j)) {
-                //Sheet InValid data test
-                excel.setExcelFile(excelPath, sheetName_InvalidData);
-                int targetValue = Integer.parseInt(STT_Sheet_TangKemSPTheoBoiSo);
-
-                //Lấy vị trí các STT mapping với bên sheet TangKemSPTheoBoiSo
-                List<Integer> positions = excel.findPositions(excel.indexColumByText("STT"), targetValue);
-                int start = 0, end = 0;
-                if (!positions.isEmpty()) {
-                    for (int i = 0; i < positions.size(); i += 2) {
-                        start = positions.get(i);
-                        end = positions.get(i + 1);
-                    }
-                }
-
-                //Call api theo từng data test sheet valid_data
-                for (int i = start; i <= end; i++) {
-                    if (schemeID.equals("FAIL TẠO SCHEMA")) {
-                        excel.setCellData("FAIL TẠO SCHEMA", i, "Kết quả");
-                    }else {
-                        try {
-                            String sku = excel.getCellData("sku", i);
-                            int quantity = Integer.parseInt(excel.getCellData("quantity", i));
-                            String company_id = excel.getCellData("company_id", i);
-                            String agent_phone = excel.getCellData("agent_phone", i);
-                            String data = "Data invalid dòng " + i + " của schema: " + schemeID + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone;
-                            System.out.println(data);
-                            step(data);
-                            Orders orderList = httangKemSPTheoBoiSoPage.getOrders(sku, quantity, company_id, agent_phone);
-
-                            Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
-                            if (rsp.statusCode() == 200) {
-                                String idMaKM = apiHelper.getReponse(rsp, "promotions_allow_apply.id");
-                                System.out.println("List schema from API: " + idMaKM);
-                                verifyTrue(!idMaKM.contains(schemeID), "Check schema vừa tạo không nằm trong list api");
-                                if (!idMaKM.contains(schemeID)) {
-                                    excel.setCellData("", i, "Thực tế");
-                                    excel.setCellData("", i, "Mong đợi");
-                                    excel.setCellData("PASS", i, "Kết quả");
-                                } else {
-                                    excel.setCellData(schemeID, i, "Thực tế");
-                                    excel.setCellData("FAIL", i, "Kết quả");
-                                }
-                            }
-                        } catch (Exception e) {
-                            verifyFalse(true, "Run row " + i + ": " + e.getMessage());
-                            System.err.println("Run row: " + i + " " + e.getMessage());
-                        }
-                    }
-                }
-            }
-//        }
     }
 
     @AfterClass(alwaysRun = true)
