@@ -2,6 +2,8 @@ package actions.helpers;
 
 import actions.common.GlobalConstants;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import io.qameta.allure.Allure;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
@@ -65,8 +67,9 @@ public class ApiHelper {
         for (int j = 1; j < soLuongDong; j++) {
             String schemeID = excel.getCellData("SchemaID", j);
             String STT_Sheet_TangKemSPTheoBoiSo = excel.getCellData("STT", j);
-            int targetValue = Integer.parseInt(STT_Sheet_TangKemSPTheoBoiSo);
-            listSchemIDAndSTT.add(new GetSchemaIDAndSTT(schemeID, targetValue));
+            String name=excel.getCellData("SchemaName", j);
+            int STT = Integer.parseInt(STT_Sheet_TangKemSPTheoBoiSo);
+            listSchemIDAndSTT.add(new GetSchemaIDAndSTT(schemeID, STT,name));
         }
         return listSchemIDAndSTT;
     }
@@ -76,12 +79,12 @@ public class ApiHelper {
         int quantity = Integer.parseInt(excel.getCellData("quantity", i));
         String company_id = excel.getCellData("company_id", i);
         String agent_phone = excel.getCellData("agent_phone", i);
-        System.out.println("Data test dòng " + i + ": " + schemeID + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
+        System.out.println("Data test dòng  " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
         Allure.step("Data test dòng  " + i + "|| " + sku + "||" + quantity + "||" + company_id + "||" + agent_phone);
         Orders orderList = getOrders(sku, quantity, company_id, agent_phone);
 
         Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
-        String listIdKM="";
+        String listIdKM = null;
         if (rsp.statusCode() == 200) {
             listIdKM= apiHelper.getReponse(rsp, jsonPath);
         }

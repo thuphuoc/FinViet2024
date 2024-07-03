@@ -8,4 +8,5 @@ import lombok.Data;
 public class GetSchemaIDAndSTT {
     String schemaID;
     int stt;
+    String name;
 }

@@ -3,9 +3,11 @@ package actions.common;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gson.JsonArray;
 import interfaces.BaseUI;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
@@ -483,7 +485,21 @@ public class BasePage {
         threadSecond(3);
     }
 
-    public String[] phanTachDauPhay(String text){
-       return  text.split(",");
+    public String[] getArrayAfterPhanTachDauPhay(String text){
+        String textAfterReplace=text.replace("[","").replace("]","").replaceAll(" ","");
+       return  textAfterReplace.split(",");
     }
+
+    public  int getIndexSchemaIdInArray(String[] myArray, String valueToFind) {
+        int index = -1;
+        for (int i = 0; i < myArray.length; i++) {
+            if (myArray[i].equals(valueToFind)) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+
 }

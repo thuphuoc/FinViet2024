@@ -171,8 +171,8 @@ public class KhuyenMaiPO extends BasePage {
                     String phuongThuc_DSSP = excel.getCellData("Phương thức_DSSP", dong);
                     String sku = excel.getCellData("SKU_DSSP", dong);
                     chonPhuongThuc(phuongThuc_DSSP);
-                    for(int i =0 ; i< phanTachDauPhay(sku).length; i++){
-                        String skuItem=phanTachDauPhay(sku)[i];
+                    for(int i =0 ; i< getArrayAfterPhanTachDauPhay(sku).length; i++){
+                        String skuItem=getArrayAfterPhanTachDauPhay(sku)[i];
                         themMoiDieuKienBangForm(loaiDieuKien, skuItem, "SKU", "Tìm kiếm sản phẩm");
                     }
                     break;
@@ -180,8 +180,8 @@ public class KhuyenMaiPO extends BasePage {
                     String phuongThuc_DSNPP = excel.getCellData("Phương thức_DSNPP", dong);
                     chonPhuongThuc(phuongThuc_DSNPP);
                     String MaNPP_DSNPP = excel.getCellData("MaNPP_DSNPP", dong);
-                    for(int i =0 ; i< phanTachDauPhay(MaNPP_DSNPP).length; i++){
-                        String maNPPItem=phanTachDauPhay(MaNPP_DSNPP)[i];
+                    for(int i =0 ; i< getArrayAfterPhanTachDauPhay(MaNPP_DSNPP).length; i++){
+                        String maNPPItem=getArrayAfterPhanTachDauPhay(MaNPP_DSNPP)[i];
                         themMoiDieuKienBangForm(loaiDieuKien, maNPPItem, "Mã NPP", "Tìm kiếm Nhà phân phối");
                     }
                     break;
@@ -229,8 +229,8 @@ public class KhuyenMaiPO extends BasePage {
                     String phuongThuc_DTThuocSoDT = excel.getCellData("Phương thức_DTThuocSoDT", dong);
                     chonPhuongThuc(phuongThuc_DTThuocSoDT);
                     String soDT = excel.getCellData("Số điện thoại_DTThuocSoDT", dong);
-                    for(int i =0 ; i< phanTachDauPhay(soDT).length; i++){
-                        String soDTItem=phanTachDauPhay(soDT)[i];
+                    for(int i =0 ; i< getArrayAfterPhanTachDauPhay(soDT).length; i++){
+                        String soDTItem=getArrayAfterPhanTachDauPhay(soDT)[i];
                         sendKeyByNameLabel(soDTItem, "Số điện thoại");
                         clickToBtnByText("Thêm số");
                     }

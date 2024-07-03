@@ -102,13 +102,9 @@ public class BaseTest {
 
     private void setStepFail(String message) {
         String uuid = java.util.UUID.randomUUID().toString();
-        System.out.println("Starting step with UUID: " + uuid); // In UUID để kiểm tra
-
-        // Tạo StepResult và bắt đầu step
         StepResult stepResult = new StepResult().setName(message);
         Allure.getLifecycle().startStep(uuid, stepResult);
         Allure.getLifecycle().updateStep(uuid, result -> result.setStatus(Status.FAILED));
-        // Chụp ảnh màn hình và thêm vào step của báo cáo Allure
         captureScreenshot();
         Allure.getLifecycle().stopStep(uuid);
     }
