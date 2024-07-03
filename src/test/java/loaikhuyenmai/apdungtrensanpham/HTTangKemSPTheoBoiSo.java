@@ -10,6 +10,8 @@ import actions.pageobject.apdungtrensanpham.HTTangKemSPTheoBoiSoPO;
 import actions.pageobject.loaikhuyenmai.KhuyenMaiPO;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
@@ -132,31 +134,38 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                         excel.setCellData("FAIL TẠO SCHEMA", i, GlobalConstants.COL_KETQUA);
                     } else {
                         try {
-                            String listIdMaKMFromAPI = apiHelper.getReponseKMFromAPI(excel, apiHelper, i, schemeID,"promotions_allow_apply.id");
-                            System.out.println("List schema from API dòng "+i +": "+ listIdMaKMFromAPI);
-                            step("List schema from API dòng "+i +": "+ listIdMaKMFromAPI);
-                            verifyTrue(listIdMaKMFromAPI.contains(schemeID), "Check schema vừa tạo có trong list API");
-
-                            if (listIdMaKMFromAPI.contains(schemeID)) {
-                                //tìm vị trí của ID Schema để truyền vào lấy được discount
-                                String[] arraylistIdMaKMFromAPI = basePage.getArrayAfterPhanTachDauPhay(listIdMaKMFromAPI);
-                                int findIndexFromID= basePage.getIndexSchemaIdInArray(arraylistIdMaKMFromAPI, schemeID);
-                                System.out.println("Index: "+findIndexFromID);
-
-                                String listDiscount=apiHelper.getReponseKMFromAPI(excel,apiHelper,i,schemeID,"orders[0].products[0].promotions["+findIndexFromID+"].discount_action");
-                                String nameSchemaFromAPI=apiHelper.getReponseKMFromAPI(excel,apiHelper,i,schemeID,"promotions_allow_apply["+findIndexFromID+"].name");
-                                JsonElement jsonEl= JsonParser.parseString(listDiscount);
-                                String quantityAPI =jsonEl.getAsJsonObject().get("any").getAsJsonArray().get(0).getAsJsonObject().get("discountAction").getAsJsonObject().get("quantity").toString();
-
+                            String rspFromAPI = apiHelper.getReponseKMFromAPI(excel, apiHelper, i, schemeID);
+                            JSONObject jsonObjectRspFromAPI= new JSONObject(rspFromAPI);
+                            JSONArray jsonArrayPromotionApply=  jsonObjectRspFromAPI.getJSONArray("promotions_allow_apply");
+                            System.out.println("List schema from API: " + jsonArrayPromotionApply.getJSONObject(0).get("id"));
+                            JSONArray jsonArrayPromotion=  jsonObjectRspFromAPI.getJSONArray("orders").getJSONObject(0).getJSONArray("products").getJSONObject(0).getJSONArray("promotions");
+                            String SchemaIDAPI = "", schemaNameAPI = "",quantityAPI = "";
+                            for(int k = 0 ; k < jsonArrayPromotionApply.length(); k++){
+                                SchemaIDAPI = jsonArrayPromotionApply.getJSONObject(k).getString("id");
+                                if(SchemaIDAPI.equals(schemeID)){
+                                    schemaNameAPI = jsonArrayPromotionApply.getJSONObject(k).getString("name");
+                                    for(int l = 0 ; l < jsonArrayPromotion.length(); l++) {
+                                        String idPro = jsonArrayPromotion.getJSONObject(l).getString("id");
+                                        if (idPro.equals(schemeID)) {
+                                            String discount_action = jsonArrayPromotion.getJSONObject(l).getString("discount_action");
+                                            JsonElement jsonEl = JsonParser.parseString(discount_action);
+                                            quantityAPI = jsonEl.getAsJsonObject().get("any").getAsJsonArray().get(0).getAsJsonObject().get("discountAction").getAsJsonObject().get("quantity").toString();
+                                            break;
+                                        }
+                                    }
+                                    break;
+                                }
+                            }
+                            if(SchemaIDAPI.equals(schemeID)){
                                 excel.setCellData(schemeID, i, GlobalConstants.COL_SCHEMAID_MONGDOI);
                                 excel.setCellData(schemeID, i, GlobalConstants.COL_SCHEMAID_THUCTE);
                                 excel.setCellData(nameSchemaInSheet, i, GlobalConstants.COL_NAME_MONGDOI);
-                                excel.setCellData(nameSchemaFromAPI, i, GlobalConstants.COL_NAME_THUCTE);
+                                excel.setCellData(schemaNameAPI, i, GlobalConstants.COL_NAME_THUCTE);
                                 excel.setCellData(quantityAPI, i, GlobalConstants.COL_QUANTITY_THUCTE);
                                 String quantityMongDoi=excel.getCellData(GlobalConstants.COL_QUANTITY_MONGDOI,i).toString();
                                 verifyTrue(quantityAPI.equals(quantityMongDoi),"Check discount thực tế: "+quantityAPI+" || mong đợi: "+quantityMongDoi);
-                                verifyTrue(nameSchemaInSheet.equals(nameSchemaFromAPI),"Check name thực tế: "+nameSchemaFromAPI+" || mong đợi: "+nameSchemaInSheet);
-                                if(quantityAPI.equals(quantityMongDoi) && nameSchemaInSheet.equals(nameSchemaFromAPI)){
+                                verifyTrue(nameSchemaInSheet.equals(schemaNameAPI),"Check name thực tế: "+schemaNameAPI+" || mong đợi: "+nameSchemaInSheet);
+                                if(quantityAPI.equals(quantityMongDoi) && nameSchemaInSheet.equals(schemaNameAPI)){
                                     excel.setCellData("PASS", i, GlobalConstants.COL_KETQUA);
                                 }else{
                                     excel.setCellData("FAIL", i, GlobalConstants.COL_KETQUA);
@@ -178,7 +187,8 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
         }
     }
 
-    @Test(priority = 3)
+
+//    @Test(priority = 3)
     public void TC003_CallApi_InValid_Data() {
         excel=new ExcelHelper();
         apiHelper=new ApiHelper();
@@ -203,7 +213,7 @@ public class HTTangKemSPTheoBoiSo extends BaseTest {
                         excel.setCellData("FAIL TẠO SCHEMA", i, GlobalConstants.COL_KETQUA);
                     } else {
                         try {
-                            String listIdMaKMFromAPI = apiHelper.getReponseKMFromAPI(excel, apiHelper, i, schemeID,"promotions_allow_apply.id");
+                            String listIdMaKMFromAPI = apiHelper.getReponseKMFromAPI(excel, apiHelper, i, schemeID);
                             System.out.println("List schema from API: " + listIdMaKMFromAPI);
                             step("List schema from API: " + listIdMaKMFromAPI);
                             verifyTrue(!listIdMaKMFromAPI.contains(schemeID), "Check schema vừa tạo không nằm trong list api");

@@ -74,7 +74,7 @@ public class ApiHelper {
         return listSchemIDAndSTT;
     }
 
-    public String getReponseKMFromAPI(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID, String jsonPath) {
+    public String getReponseKMFromAPI(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID) {
         String sku = excel.getCellData("sku", i);
         int quantity = Integer.parseInt(excel.getCellData("quantity", i));
         String company_id = excel.getCellData("company_id", i);
@@ -84,10 +84,10 @@ public class ApiHelper {
         Orders orderList = getOrders(sku, quantity, company_id, agent_phone);
 
         Response rsp = apiHelper.postRequestJson(orderList, GlobalConstants.URL_API);
-        String listIdKM = null;
         if (rsp.statusCode() == 200) {
-            listIdKM= apiHelper.getReponse(rsp, jsonPath);
+            return rsp.body().asString();
+        }else {
+            return null;
         }
-        return listIdKM;
     }
 }
