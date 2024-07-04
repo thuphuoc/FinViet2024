@@ -9,10 +9,13 @@ public class GlobalConstants {
     public static final String USERNAME = "0902855998";
     public static final String PASSWORD = "Trien1000!";
     public static final String URL_API = "https://promotion-test.finviet.com.vn:6868/v1/combines/promotions:list-promotions";
+    public static final String URL_ECOM = "https://ecom-api-test.finviet.com.vn:6868/v1/carts/validates";
 
     //Quản lý các tên trong excel
     //sheet valid data
-    public static final String NAME_HTTANGKEMSPTHEOBOISO = "HTTangKemSPTheoBoiSo.xlsx";
+    public static final String FILE_HTTANGKEMSPTHEOBOISO = "HTTangKemSPTheoBoiSo.xlsx";
+    public static final String FILE_HTGiamGiaSPTHEOBOISO = "HTGiamGiaSPTheoBoiSo.xlsx";
+    public static final String SHEET_HTGiamGiaSPTHEOBOISO = "GiamGiaSPTheoBoiSo";
     public static final String COL_QUANTITY_THUCTE = "Quantity_Thực tế";
     public static final String COL_QUANTITY_MONGDOI = "Quantity_Mong đợi";
     public static final String COL_SCHEMAID_THUCTE = "SchemaID_Thực tế";

@@ -490,15 +490,15 @@ public class BasePage {
        return  textAfterReplace.split(",");
     }
 
-    public  int getIndexSchemaIdInArray(String[] myArray, String valueToFind) {
-        int index = -1;
+    public  boolean isContainInArray(String[] myArray, String valueToFind) {
+      boolean isContainInArray=false;
         for (int i = 0; i < myArray.length; i++) {
             if (myArray[i].equals(valueToFind)) {
-                index = i;
+                isContainInArray=true;
                 break;
             }
         }
-        return index;
+        return isContainInArray;
     }
 
 

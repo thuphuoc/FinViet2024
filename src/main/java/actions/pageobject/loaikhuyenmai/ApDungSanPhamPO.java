@@ -1,18 +1,17 @@
-package actions.pageobject.apdungtrensanpham;
+package actions.pageobject.loaikhuyenmai;
 import actions.common.BasePage;
 import actions.helpers.ExcelHelper;
 import actions.pageobject.GeneratorManager;
-import actions.pageobject.loaikhuyenmai.KhuyenMaiPO;
 import interfaces.khuyenmai.KhuyenMaiUI;
 
 import org.openqa.selenium.WebDriver;
 
-public class HTTangKemSPTheoBoiSoPO extends BasePage {
+public class ApDungSanPhamPO extends BasePage {
     private WebDriver driver;
     KhuyenMaiPO khuyenMaiPage;
 
 
-    public HTTangKemSPTheoBoiSoPO(WebDriver driver) {
+    public ApDungSanPhamPO(WebDriver driver) {
         this.driver = driver;
     }
 
@@ -35,6 +34,18 @@ public class HTTangKemSPTheoBoiSoPO extends BasePage {
                     khuyenMaiPage.senkeyToElement(driver, KhuyenMaiUI.THEM_SL_NOIDUNG, sl_ToiThieu, "Nhập vào số lượng tối thiếu");
                     khuyenMaiPage.senkeyToElement(driver, KhuyenMaiUI.THEM_SL_NOIDUNG, sl_ToiDa, "Nhập vào số lượng tối đa");
                     khuyenMaiPage.senkeyToElement(driver, KhuyenMaiUI.THEM_SL_NOIDUNG, tongSLKM, "Nhập vào tổng số lượng khuyến mãi");
+                    break;
+                case "Giảm giá trên số lượng nhóm sản phẩm":
+                    if(excel.isCellHasData("Nội dung_Giảm số tiền cố định",dong)){
+                        String soTienGiam=excel.getCellData("Giá trị giảm_Giảm số tiền cố định",dong);
+                        khuyenMaiPage.chonNoiDung("Giảm số tiền cố định");
+                        khuyenMaiPage.sendKeyByNameLabel(soTienGiam, "Giá trị giảm (đ)");
+                    }
+                    if(excel.isCellHasData("Nội dung_Giảm giá sản phẩm theo hệ số",dong)){
+                        String heSo=excel.getCellData("Giá trị giảm_Giảm số tiền cố định",dong);
+                        khuyenMaiPage.chonNoiDung("Giảm giá sản phẩm theo hệ số");
+                        khuyenMaiPage.sendKeyByNameLabel(heSo, "Hệ số");
+                    }
                     break;
             }
             threadSecond(2);

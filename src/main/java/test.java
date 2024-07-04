@@ -1,68 +1,41 @@
+
 import actions.common.BasePage;
+import actions.common.GlobalConstants;
 import actions.helpers.ApiHelper;
-import actions.helpers.ExcelHelper;
-import com.google.gson.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import io.restassured.response.Response;
+import org.testng.annotations.Test;
+import pojo.loaikhuyenmai.GiamGiaSPTheoBoiSo;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class test {
-    public static void main(String[] args) {
-        String excelPath = "src/main/resources/HTTangKemSPTheoBoiSo.xlsx";
-        ExcelHelper excel= new ExcelHelper();
-        excel.setExcelFile(excelPath, "valid_data");
+
+    @Test
+    public void test1() {
         ApiHelper apiHelper= new ApiHelper();
-        BasePage b= new BasePage();
+        GiamGiaSPTheoBoiSo giamGiaSPTheoBoiSo= new GiamGiaSPTheoBoiSo();
+        
+        GiamGiaSPTheoBoiSo.Province province = giamGiaSPTheoBoiSo.new Province(1);
+        GiamGiaSPTheoBoiSo.District district = giamGiaSPTheoBoiSo.new District(10);
+        GiamGiaSPTheoBoiSo.Ward ward = giamGiaSPTheoBoiSo.new Ward(27184);
+        GiamGiaSPTheoBoiSo.Customer customer = giamGiaSPTheoBoiSo.new Customer(province,district,ward);
+        GiamGiaSPTheoBoiSo.Info info = giamGiaSPTheoBoiSo.new Info(customer,2,2,"COD","MERCHANT");
 
-        String schemeID="1a3d2a9f-ded2-4090-b8cb-0af8be1ccb5c";
+        int quanity= 2;
+        String sku= "SKUP117883V334265";
+        int maNPP=617895;
+        String soDT="0368199222";
+        List<Object> gifts = null;
+        GiamGiaSPTheoBoiSo.ProductVariant productVariant = giamGiaSPTheoBoiSo.new ProductVariant(quanity,sku,maNPP,13000,1300, gifts);
 
-        String rspFromAPI = apiHelper.getReponseKMFromAPI(excel, apiHelper, 3, schemeID);
-        JSONObject jsonObjectRspFromAPI= new JSONObject(rspFromAPI);
-        JSONArray jsonArrayPromotionApply=  jsonObjectRspFromAPI.getJSONArray("promotions_allow_apply");
-        System.out.println("List schema from API: " + jsonArrayPromotionApply.getJSONObject(0).get("id"));
-        JSONArray jsonArrayPromotion=  jsonObjectRspFromAPI.getJSONArray("orders").getJSONObject(0).getJSONArray("products").getJSONObject(0).getJSONArray("promotions");
-            for(int i = 0 ; i < jsonArrayPromotionApply.length(); i++){
-                String id= jsonArrayPromotionApply.getJSONObject(i).getString("id");
-                if(id.equals(schemeID)){
-                    String quantityAPI = "";
-                    String name= jsonArrayPromotionApply.getJSONObject(i).getString("name");
-                    for(int j = 0 ; j < jsonArrayPromotion.length(); j++) {
-                        String idPro = jsonArrayPromotion.getJSONObject(j).getString("id");
-                        if (idPro.equals(schemeID)) {
-                            String discount_action = jsonArrayPromotion.getJSONObject(j).getString("discount_action");
-                            JsonElement jsonEl = JsonParser.parseString(discount_action);
-                            quantityAPI = jsonEl.getAsJsonObject().get("any").getAsJsonArray().get(0).getAsJsonObject().get("discountAction").getAsJsonObject().get("quantity").toString();
-                            break;
-                        }
-                    }
-                    System.out.println(id + " || "+name + "|| "+quantityAPI);
-                    break;
-                }
-            }
-//
-//        String[] myArray = b.getArrayAfterPhanTachDauPhay(listIdMaKMFromAPI);
-//        int findIndexFromID= b.getIndexSchemaIdInArray(myArray, schemeID);
-//
-//        String listDiscount=apiHelper.getReponseKMFromAPI(excel,apiHelper,2,schemeID,"orders[0].products[0].promotions["+findIndexFromID+"].discount_action");
-////        System.out.println(listDiscount);
-//
-//        JsonElement jsonEl=JsonParser.parseString(listDiscount);
-//        System.out.println(jsonEl.getAsJsonObject().get("any").getAsJsonArray().get(0).getAsJsonObject().get("discountAction").getAsJsonObject().get("quantity"));
-//        String name=apiHelper.getReponseKMFromAPI(excel,apiHelper,2,schemeID,"promotions_allow_apply["+findIndexFromID+"].name");
-//        System.out.println(name);
-//        JsonArray jsonArray= new JsonArray();
-//        jsonArray.add(jsonObject.get("any"));
-//        System.out.println(jsonArray.get(0));
-    }
+        GiamGiaSPTheoBoiSo.Product product = giamGiaSPTheoBoiSo.new Product(117883,Arrays.asList(productVariant));
+        GiamGiaSPTheoBoiSo.Cart cart = giamGiaSPTheoBoiSo.new Cart(617895,"FINVIET",Arrays.asList(product));
+        GiamGiaSPTheoBoiSo.Order order = giamGiaSPTheoBoiSo.new Order("038c5c3d0a6604da8b2f19e0c28b0c17",Arrays.asList(cart),info,soDT,"MERCHANT");
+        Response rsp=apiHelper.postRequestJsonEcom(order, GlobalConstants.URL_ECOM) ;
+        System.out.println(rsp.getBody().prettyPrint());
 
-    private static int findIndexFromID(String[] myArray, String valueToFind) {
-        int index = -1;
-        for (int i = 0; i < myArray.length; i++) {
-            if (myArray[i].equals(valueToFind)) {
-                index = i;
-                break;
-            }
-        }
-        return index;
     }
 }
+
 

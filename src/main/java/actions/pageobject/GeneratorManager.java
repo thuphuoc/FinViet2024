@@ -1,6 +1,6 @@
 package actions.pageobject;
 
-import actions.pageobject.apdungtrensanpham.HTTangKemSPTheoBoiSoPO;
+import actions.pageobject.loaikhuyenmai.ApDungSanPhamPO;
 import actions.pageobject.loaikhuyenmai.KhuyenMaiPO;
 import org.openqa.selenium.WebDriver;
 
@@ -11,7 +11,7 @@ public class GeneratorManager {
     return new KhuyenMaiPO(driver);
     }
 
-    public static HTTangKemSPTheoBoiSoPO getHTTangKemSPTheoBoiSoPage(WebDriver driver) {
-    return new HTTangKemSPTheoBoiSoPO(driver);
+    public static ApDungSanPhamPO getHTTangKemSPTheoBoiSoPage(WebDriver driver) {
+    return new ApDungSanPhamPO(driver);
     }
 }

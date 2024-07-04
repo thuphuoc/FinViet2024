@@ -18,8 +18,8 @@ public class KhuyenMaiPO extends BasePage {
         clickToElement(driver, KhuyenMaiUI.TAOMOI_KM_DYM, tenKhuyenMai);
     }
 
-    public void searchNhapMaNCC(String maNCC) {
-        senkeyToElement(driver, KhuyenMaiUI.SEARCH_DYM, maNCC, "Mã NCC");
+    public void searchForm(String textSearch, String labelSearch) {
+        senkeyToElement(driver, KhuyenMaiUI.SEARCH_DYM, textSearch, labelSearch);
         clickToElement(driver, KhuyenMaiUI.TIMKIEM_NCC_DMY, "Tìm kiếm");
         threadSecond(1);
         int sizeRadio=getElementSize(driver, KhuyenMaiUI.CHONNCC_CHECKBOX);
@@ -191,6 +191,14 @@ public class KhuyenMaiPO extends BasePage {
                     chonPhuongThuc(phuongThuc_SoLanMH);
                     sendKeyByNameLabel(soLanDaMuaHang, "Số lần đã mua hàng");
                     break;
+                case "Danh sách sản phẩm của NPP":
+                    String sku_DSSP_NPP=excel.getCellData("SKU_DSSP_NPP", dong);
+                    String phuongThuc=excel.getCellData("Phương thức_DSSP_NPP", dong);
+                    chonPhuongThuc(phuongThuc);
+                    for(int i =0 ; i< getArrayAfterPhanTachDauPhay(sku_DSSP_NPP).length; i++){
+                        String skuItem=getArrayAfterPhanTachDauPhay(sku_DSSP_NPP)[i];
+                        themMoiDieuKienBangForm(loaiDieuKien, skuItem, "SKU", "Tìm kiếm sản phẩm");
+                    }
             }
             threadSecond(2);
         }

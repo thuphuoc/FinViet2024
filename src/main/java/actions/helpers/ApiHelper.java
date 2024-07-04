@@ -2,12 +2,15 @@ package actions.helpers;
 
 import actions.common.GlobalConstants;
 import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import io.qameta.allure.Allure;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
-import pojo.*;
+import pojo.GetSchemaIDAndSTT;
+import pojo.HowToLoad;
+import pojo.Order;
+import pojo.Product;
+import pojo.Orders;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,13 +24,21 @@ public class ApiHelper {
     public Response postRequestJson(Object bodyData, String url) {
         Allure.step("Call Api: " + url);
         Allure.step("Body data: " + gson.toJson(bodyData));
-//        System.out.println("Body: "+ gson.toJson(bodyData));
         RequestSpecification req = given();
         rsp = req.baseUri(GlobalConstants.URL)
                 .contentType("application/json")
                 .header("x-app-id", "ca5e7185-9b34-4321-b51e-019f0a5ff63f")
                 .body(gson.toJson(bodyData)).when().post(url);
-//        Allure.step("Response: " + rsp.prettyPrint());
+        return rsp;
+    }
+    public Response postRequestJsonEcom(Object bodyData, String url) {
+        Allure.step("Call Api: " + url);
+        Allure.step("Body data: " + gson.toJson(bodyData));
+        RequestSpecification req = given();
+        rsp = req.baseUri(GlobalConstants.URL)
+                .contentType("application/json")
+                .header("Authorization","Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjE0Njg1NjFjMmU0OWNmMzdmOGJhMzNjOTE2YWJjZGUwNzdmNDQxN2EwOTY2Y2YwYWNjNjBjNjgzNjIwZDQ4OGNmMTQxNTU5ZjBhODI5NDcwIn0.eyJhdWQiOiIzIiwianRpIjoiMTQ2ODU2MWMyZTQ5Y2YzN2Y4YmEzM2M5MTZhYmNkZTA3N2Y0NDE3YTA5NjZjZjBhY2M2MGM2ODM2MjBkNDg4Y2YxNDE1NTlmMGE4Mjk0NzAiLCJpYXQiOjE3MjAwNTg2MTQsIm5iZiI6MTcyMDA1ODYxNCwiZXhwIjoxNzIwMTQ1MDEyLCJzdWIiOiIxIiwic2NvcGVzIjpbXX0.WG8gnP1T9QiukGPtILikWqKnvgCPI-D3Xk-D1W7HDod1IFH7_B6HRrUmsK5FCGf6aJHrztfS5AjMyapWJQIIe_XjMLPVQSgH7z49F9urchFb8nzQwnz-54Wgh7_9G-_K7T4CnB2eMzfBywpIhMdch-SWB1lBm2vpDsAn6yXRtqIkBWh4DodJv978XvCStPkVinbp7BGyE8p1_po2Z23ykBC2ZEVE6Zj301BGnCLN35uLWqq5hJkfL0FnBat9OSdv1AMowgi8uPOMLcMYWKtN2K_KjINRUNd-_Uc3BraLjxnmdKCFhKujkqVYGSKjnzlVjERpq0VREzkSX3c9s0d2FQc1OsbRtPxJhgUnuz06bIumFQ539qbxxk_csqU41_7cm2BY5zSZGKdlnWDwtOI1zJwIuX_aN1ljAaBFr6ByZUWP9MIk7QQnWfl9Egj2UHTk6Dbd5qvGBQnEAWKq9M5t5k-ksBoVc53Jrx2KIl5nsK3OSVTIAE4UKrZYZCtLEtKZ80BLb1e8DzEEeYLfqa-VPwL6rik827u63WiIVdrfCPy8g2UydNbjmUhyq4uy95YVOPjGeCxcf_mnkr_48DmI2qUUetD-V7Z-mw7AtND9yeMjzH7oUqCLQgyVpbMa1zsEHFuiO53VZoOW50XcxkODuymJP3MBDuWTRiDJKeIS_6E")
+                .body(gson.toJson(bodyData)).when().post(url);
         return rsp;
     }
 
@@ -74,7 +85,7 @@ public class ApiHelper {
         return listSchemIDAndSTT;
     }
 
-    public String getReponseKMFromAPI(ExcelHelper excel, ApiHelper apiHelper, int i, String schemeID) {
+    public String getReponseKMFromAPI(ExcelHelper excel, ApiHelper apiHelper, int i) {
         String sku = excel.getCellData("sku", i);
         int quantity = Integer.parseInt(excel.getCellData("quantity", i));
         String company_id = excel.getCellData("company_id", i);
