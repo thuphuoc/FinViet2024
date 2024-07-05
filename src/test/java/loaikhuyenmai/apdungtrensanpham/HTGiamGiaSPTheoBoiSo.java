@@ -59,7 +59,7 @@ public class HTGiamGiaSPTheoBoiSo extends BaseTest {
                 khuyenMaiPage.clickTaoMoiKhuyenMai("NPP");
                 khuyenMaiPage.searchForm("CN0617895","Mã NPP");
 
-                textChung = "Auto_KM_GiamGiaSPTheoBoiSo" + khuyenMaiPage.getDateTimeNow();
+                textChung = "Auto_KM_GiamGiaSPTheoBoiSo_" + khuyenMaiPage.getDateTimeNow();
                 khuyenMaiPage.taoThongTinCoBanKM(kenhMuaHang, textChung, loaiKM, hinhThucKM, mucdoHienThi, loaiCT);
 
                 khuyenMaiPage.hinhThucApDungGoiKM(i, excel);

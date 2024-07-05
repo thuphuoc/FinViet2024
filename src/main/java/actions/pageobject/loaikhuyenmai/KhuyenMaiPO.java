@@ -290,7 +290,7 @@ public class KhuyenMaiPO extends BasePage {
         int sizeRadio = getElementSize(driver,KhuyenMaiUI.SUDUNGMA_RADIO);
         int demClickTimKiem = 0;
         while (sizeRadio==0 && demClickTimKiem < 5) {
-            threadSecond(1);
+            threadSecond(3);
             demClickTimKiem++;
             sizeRadio = getElementSize(driver,KhuyenMaiUI.SUDUNGMA_RADIO);
         }

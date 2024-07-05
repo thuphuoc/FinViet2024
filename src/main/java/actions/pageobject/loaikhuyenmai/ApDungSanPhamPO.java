@@ -42,7 +42,7 @@ public class ApDungSanPhamPO extends BasePage {
                         khuyenMaiPage.sendKeyByNameLabel(soTienGiam, "Giá trị giảm (đ)");
                     }
                     if(excel.isCellHasData("Nội dung_Giảm giá sản phẩm theo hệ số",dong)){
-                        String heSo=excel.getCellData("Giá trị giảm_Giảm số tiền cố định",dong);
+                        String heSo=excel.getCellData("Hệ số_Giảm giá sản phẩm theo hệ số",dong);
                         khuyenMaiPage.chonNoiDung("Giảm giá sản phẩm theo hệ số");
                         khuyenMaiPage.sendKeyByNameLabel(heSo, "Hệ số");
                     }

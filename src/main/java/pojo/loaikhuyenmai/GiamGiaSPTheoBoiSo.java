@@ -16,6 +16,7 @@ public class GiamGiaSPTheoBoiSo {
         private Info info;
         private String agent_ref;
         private String channel;
+        private boolean is_payment;
     }
 
     @Data
@@ -23,6 +24,7 @@ public class GiamGiaSPTheoBoiSo {
     public class Cart {
         private int org_id;
         private String brand_type;
+        private List<Object> vouchers;
         private List<Product> products;
     }
 
