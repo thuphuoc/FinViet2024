@@ -5,6 +5,8 @@ import actions.common.GlobalConstants;
 import actions.helpers.ApiHelper;
 import com.google.gson.Gson;
 import io.restassured.response.Response;
+import org.apache.logging.log4j.core.config.Order;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
@@ -27,21 +29,8 @@ public class test extends BaseTest {
         int maNPP = 617895;
         String soDT = "0968686868";
         System.out.println("Data push: "+sku+" || "+quanity+" || "+maNPP+" || "+soDT);
-        GiamGiaSPTheoBoiSo giamGiaSPTheoBoiSo = new GiamGiaSPTheoBoiSo();
 
-        GiamGiaSPTheoBoiSo.Province province = giamGiaSPTheoBoiSo.new Province(1);
-        GiamGiaSPTheoBoiSo.District district = giamGiaSPTheoBoiSo.new District(10);
-        GiamGiaSPTheoBoiSo.Ward ward = giamGiaSPTheoBoiSo.new Ward(27184);
-        GiamGiaSPTheoBoiSo.Customer customer = giamGiaSPTheoBoiSo.new Customer(province, district, ward);
-        GiamGiaSPTheoBoiSo.Info info = giamGiaSPTheoBoiSo.new Info(customer, 2, 2, "COD", "MERCHANT");
-
-        List<Object> gift = new ArrayList<>();
-        List<Object> vouchers = new ArrayList<>();
-        GiamGiaSPTheoBoiSo.ProductVariant productVariant = giamGiaSPTheoBoiSo.new ProductVariant(maNPP, sku, quanity, 13000, 1300, gift);
-
-        GiamGiaSPTheoBoiSo.Product product = giamGiaSPTheoBoiSo.new Product(117883, Arrays.asList(productVariant));
-        GiamGiaSPTheoBoiSo.Cart cart = giamGiaSPTheoBoiSo.new Cart(617895, "FINVIET",vouchers, Arrays.asList(product));
-        GiamGiaSPTheoBoiSo.Order order = giamGiaSPTheoBoiSo.new Order("038c5c3d0a6604da8b2f19e0c28b0c17", Arrays.asList(cart), info, soDT, "MERCHANT",false);
+        GiamGiaSPTheoBoiSo.Order order = getOrder(maNPP, sku, quanity, soDT);
         Gson gson = new Gson();
         Response rsp = apiHelper.postRequestJsonEcom(order, GlobalConstants.URL_ECOM);
 //        System.out.println(gson.toJson(order));
@@ -81,10 +70,27 @@ public class test extends BaseTest {
             } else {
                 System.out.println("SP ko có khuyến mãi");
             }
-
         }else{
             System.out.println("Lỗi call api status code "+rsp.getStatusCode());
     }
+    }
+
+    private static GiamGiaSPTheoBoiSo.Order getOrder(int maNPP, String sku, int quanity, String soDT) {
+        GiamGiaSPTheoBoiSo giamGiaSPTheoBoiSo = new GiamGiaSPTheoBoiSo();
+        GiamGiaSPTheoBoiSo.Province province = giamGiaSPTheoBoiSo.new Province(1);
+        GiamGiaSPTheoBoiSo.District district = giamGiaSPTheoBoiSo.new District(10);
+        GiamGiaSPTheoBoiSo.Ward ward = giamGiaSPTheoBoiSo.new Ward(27184);
+        GiamGiaSPTheoBoiSo.Customer customer = giamGiaSPTheoBoiSo.new Customer(province, district, ward);
+        GiamGiaSPTheoBoiSo.Info info = giamGiaSPTheoBoiSo.new Info(customer, 2, 2, "COD", "MERCHANT");
+
+        List<Object> gift = new ArrayList<>();
+        List<Object> vouchers = new ArrayList<>();
+        GiamGiaSPTheoBoiSo.ProductVariant productVariant = giamGiaSPTheoBoiSo.new ProductVariant(maNPP, sku, quanity, 13000, 1300, gift);
+
+        GiamGiaSPTheoBoiSo.Product product = giamGiaSPTheoBoiSo.new Product(117883, Arrays.asList(productVariant));
+        GiamGiaSPTheoBoiSo.Cart cart = giamGiaSPTheoBoiSo.new Cart(617895, "FINVIET",vouchers, Arrays.asList(product));
+        GiamGiaSPTheoBoiSo.Order order = giamGiaSPTheoBoiSo.new Order("038c5c3d0a6604da8b2f19e0c28b0c17", Arrays.asList(cart), info, soDT, "MERCHANT",false);
+        return order;
     }
 
     private static JSONObject gotoProduct_variant(JSONObject jsonObjectRsp) {

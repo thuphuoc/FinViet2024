@@ -16,6 +16,10 @@ public class GlobalConstants {
     public static final String FILE_HTTANGKEMSPTHEOBOISO = "HTTangKemSPTheoBoiSo.xlsx";
     public static final String FILE_HTGiamGiaSPTHEOBOISO = "HTGiamGiaSPTheoBoiSo.xlsx";
     public static final String SHEET_HTGiamGiaSPTHEOBOISO = "GiamGiaSPTheoBoiSo";
+    public static final String SHEET_VALID_DATA = "valid_data";
+    public static final String SHEET_INVALID_DATA = "invalid_data";
+    public static final String COL_GIASAUKM_THUCTE = "GiaSPSauKM_Thực tế";
+    public static final String COL_GIASAUKM_MONGDOI = "GiaSPSauKM_Mong đợi";
     public static final String COL_QUANTITY_THUCTE = "Quantity_Thực tế";
     public static final String COL_QUANTITY_MONGDOI = "Quantity_Mong đợi";
     public static final String COL_SCHEMAID_THUCTE = "SchemaID_Thực tế";

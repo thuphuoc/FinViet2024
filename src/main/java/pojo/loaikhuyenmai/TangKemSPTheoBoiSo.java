@@ -35,7 +35,7 @@ public class TangKemSPTheoBoiSo {
     @AllArgsConstructor
     @Data
     public class Order {
-        private List<pojo.Product> products;
+        private List<TangKemSPTheoBoiSo.Product> products;
         private String company_id;
         private String payment_method;
         private int total_amount;
